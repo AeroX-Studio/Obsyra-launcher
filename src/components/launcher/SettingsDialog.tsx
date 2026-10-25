@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLauncherStore } from "@/state";
 import { getVersion } from "@tauri-apps/api/app";
-import { Settings, Zap, Cpu, Clock, RefreshCw, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 import { useDiscordRpc } from "@/lib/discord";

@@ -4,7 +4,6 @@ import { AnimatePresence, m, type Variants } from "framer-motion";
 import {
   CheckCircle2,
   ChevronRight,
-  Gamepad2,
   Globe,
   UserCircle2,
 } from "lucide-react";
