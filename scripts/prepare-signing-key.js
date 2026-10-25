@@ -5,6 +5,7 @@
  * Safely inspects the private key and password environment variables:
  *  - Checks for presence and detects common copy-paste errors (such as missing "untrusted comment:" line)
  *  - Automatically normalizes the key by prepending the required minisign comment header if missing
+ *  - Checks if key is password-encrypted and confirms password presence
  *  - Writes the normalized key to a secure temporary key file and sets TAURI_SIGNING_PRIVATE_KEY
  *    to that file path, eliminating shell escaping / newline corruption issues across OSes
  *  - Never logs, echoes, or exposes private keys or passwords
@@ -15,7 +16,9 @@ import os from "os";
 import path from "path";
 
 function main() {
-  const isTag = process.env.GITHUB_REF_TYPE === "tag" || (process.env.GITHUB_REF && process.env.GITHUB_REF.startsWith("refs/tags/"));
+  const isTag =
+    process.env.GITHUB_REF_TYPE === "tag" ||
+    (process.env.GITHUB_REF && process.env.GITHUB_REF.startsWith("refs/tags/"));
   const requireSigning = process.env.REQUIRE_SIGNING === "true" || isTag;
 
   // Retrieve raw key and password from supported variable names
@@ -28,9 +31,9 @@ function main() {
     process.env.TAURI_KEY_PASSWORD ||
     "";
 
-  // Strip UTF-8 BOM if present
+  // Strip UTF-8 BOM if present and trim accidental trailing whitespace/newlines
   rawKey = rawKey.replace(/^\uFEFF/, "").trim();
-  password = password.replace(/^\uFEFF/, "");
+  password = password.replace(/^\uFEFF/, "").replace(/[\r\n]+$/, "");
 
   if (!rawKey) {
     if (requireSigning) {
@@ -38,7 +41,7 @@ function main() {
         "::error::[Signing Validation Failed] No Tauri updater private key found in TAURI_SIGNING_PRIVATE_KEY or TAURI_PRIVATE_KEY."
       );
       console.error(
-        "[Signing Setup] To fix this in GitHub Actions:\n" +
+        "[Signing Setup] To configure signing credentials in GitHub Actions:\n" +
           "  1. Go to repository Settings -> Secrets and variables -> Actions\n" +
           "  2. Create/update secret: TAURI_SIGNING_PRIVATE_KEY\n" +
           "  3. Paste the entire content of your .key file (including 'untrusted comment: ...')\n" +
@@ -88,11 +91,12 @@ function main() {
     process.exit(1);
   }
 
-  // Validate that the second line is valid base64
+  // Validate that the second line contains valid base64 key material
   const base64Candidate = lines[1];
+  let keyBuffer;
   try {
-    const buf = Buffer.from(base64Candidate, "base64");
-    if (buf.length < 32 || base64Candidate.length < 40) {
+    keyBuffer = Buffer.from(base64Candidate, "base64");
+    if (keyBuffer.length < 32 || base64Candidate.length < 40) {
       console.error(
         "::error::[Signing Validation Failed] Second line of private key does not contain sufficient base64 key material."
       );
@@ -103,6 +107,25 @@ function main() {
       "::error::[Signing Validation Failed] Second line of private key is not valid base64."
     );
     process.exit(1);
+  }
+
+  // Check if key is Scrypt password-encrypted (minisign signature algorithm "Ed", KDF algorithm "Sc")
+  if (
+    keyBuffer.length >= 4 &&
+    keyBuffer[0] === 0x45 &&
+    keyBuffer[1] === 0x64 &&
+    keyBuffer[2] === 0x53 &&
+    keyBuffer[3] === 0x63
+  ) {
+    if (!password) {
+      console.log(
+        "::warning::[Signing Validation] Private key appears to be Scrypt password-protected, but TAURI_SIGNING_PRIVATE_KEY_PASSWORD is empty. If decryption fails during bundle signing, ensure the password secret is set in GitHub Actions."
+      );
+    } else {
+      console.log(
+        "[Signing Validation] Password detected for password-protected private key."
+      );
+    }
   }
 
   // Create a secure temporary directory and write the normalized key file

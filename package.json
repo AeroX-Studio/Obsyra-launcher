@@ -13,6 +13,7 @@
     "build": "bun check && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "tauri:signer": "tauri signer generate",
     "format": "prettier --write . && cd src-tauri && cargo fmt",
     "prepare": "lefthook install",
     "doctor": "npx react-doctor@latest"
