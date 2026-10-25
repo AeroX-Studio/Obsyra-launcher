@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Obsyra Launcher",
+  "version": "1.0.1",
+  "identifier": "com.obsy-official.obsy-launcher",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "beforeBuildCommand": "bun run build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "Obsyra Launcher",
+        "width": 1024,
+        "height": 600,
+        "minWidth": 800,
+        "minHeight": 500,
+        "resizable": true,
+        "center": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' blob: data:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: asset: http://asset.localhost; font-src 'self' data:; connect-src 'self' https: ipc: http://localhost:* ws: wsocket:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "targets": "all",
+    "publisher": "Obsyra Studio by AeroX",
+    "copyright": "Copyright © 2026 Obsyra Studio by AeroX. All rights reserved.",
+    "shortDescription": "Obsyra Launcher",
+    "longDescription": "Obsyra Launcher - A modern cross-platform Minecraft launcher by Obsyra Studio by AeroX.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "icons/128x128.png",
+        "sidebarImage": "icons/128x128@2x.png",
+        "installMode": "currentUser"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgyOTk2NjY4NzY1QzM3NjkKUldScE4xeDJhR2FaZ3B1SUo4Z2x5OHY4NmVyc0tHN3I2cHRzd0M1STkxY2RyVmxSUEpHYStzUmMK",
+      "endpoints": [
+        "https://github.com/AeroX-Studio/Obsyra-launcher/releases/latest/download/latest.json"
+      ]
+    }
+  }
+}
