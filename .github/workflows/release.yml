@@ -6,13 +6,8 @@ on:
       - "v*"
   workflow_dispatch:
     inputs:
-      sign_updater:
-        description: "Generate and sign updater artifacts (requires TAURI_SIGNING_PRIVATE_KEY secret)"
-        required: false
-        type: boolean
-        default: true
       draft_release:
-        description: "Create draft release for verification before publishing"
+        description: "Create draft release for review before publishing"
         required: false
         type: boolean
         default: true
@@ -79,7 +74,7 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
-          REQUIRE_SIGNING: ${{ github.ref_type == 'tag' || inputs.sign_updater != false }}
+          REQUIRE_SIGNING: "true"
 
       - name: build tauri app
         uses: tauri-apps/tauri-action@v1
@@ -93,10 +88,8 @@ jobs:
           tagName: v__VERSION__
           releaseName: "Obsyra Launcher v__VERSION__"
           releaseBody: "See the assets to download this version and install."
-          releaseDraft: ${{ inputs.draft_release == false ? false : true }}
+          releaseDraft: ${{ github.event.inputs.draft_release == 'false' && false || true }}
           prerelease: false
-          uploadUpdaterJson: ${{ github.ref_type == 'tag' || inputs.sign_updater != false }}
+          uploadUpdaterJson: true
           updaterJsonPreferNsis: true
-          args: >-
-            ${{ matrix.args }}
-            ${{ (github.ref_type == 'tag' || inputs.sign_updater != false) && '--config "{\"bundle\":{\"createUpdaterArtifacts\":true}}"' || '' }}
+          args: ${{ matrix.args }} --config src-tauri/tauri.updater.conf.json
