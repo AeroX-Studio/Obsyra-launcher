@@ -1,9 +1,21 @@
 name: Release
+
 on:
   push:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      sign_updater:
+        description: "Generate and sign updater artifacts (requires TAURI_SIGNING_PRIVATE_KEY secret)"
+        required: false
+        type: boolean
+        default: true
+      draft_release:
+        description: "Create draft release for verification before publishing"
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -15,12 +27,16 @@ jobs:
       matrix:
         include:
           - platform: "macos-latest"
+            target: "aarch64-apple-darwin"
             args: "--target aarch64-apple-darwin"
           - platform: "macos-latest"
+            target: "x86_64-apple-darwin"
             args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04"
+            target: "x86_64-unknown-linux-gnu"
             args: ""
           - platform: "windows-latest"
+            target: "x86_64-pc-windows-msvc"
             args: ""
 
     runs-on: ${{ matrix.platform }}
@@ -31,7 +47,7 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libayatana-appindicator3-dev libxdo-dev libssl-dev
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -39,7 +55,7 @@ jobs:
           node-version: 24
 
       - name: setup bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
@@ -56,18 +72,31 @@ jobs:
         with:
           workspaces: "./src-tauri -> target"
 
+      - name: prepare and validate updater signing key
+        run: node scripts/prepare-signing-key.js
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          REQUIRE_SIGNING: ${{ github.ref_type == 'tag' || inputs.sign_updater != false }}
+
       - name: build tauri app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ env.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          TAURI_PRIVATE_KEY: ${{ env.TAURI_PRIVATE_KEY || secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ env.TAURI_KEY_PASSWORD || secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: "Obsyra Launcher ${{ github.ref_name }}"
+          tagName: v__VERSION__
+          releaseName: "Obsyra Launcher v__VERSION__"
           releaseBody: "See the assets to download this version and install."
-          releaseDraft: false
+          releaseDraft: ${{ inputs.draft_release == false ? false : true }}
           prerelease: false
-          includeUpdaterJson: true
+          uploadUpdaterJson: ${{ github.ref_type == 'tag' || inputs.sign_updater != false }}
           updaterJsonPreferNsis: true
-          args: ${{ matrix.args }}
+          args: >-
+            ${{ matrix.args }}
+            ${{ (github.ref_type == 'tag' || inputs.sign_updater != false) && '--config "{\"bundle\":{\"createUpdaterArtifacts\":true}}"' || '' }}
