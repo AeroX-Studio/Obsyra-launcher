@@ -14,6 +14,11 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:signer": "tauri signer generate",
+    "test": "node scripts/test-signing-key.js && node scripts/test-updater-frontend.js && node scripts/check-versions.js",
+    "test:signing": "node scripts/test-signing-key.js",
+    "test:updater": "node scripts/test-updater-frontend.js",
+    "verify:keys": "node scripts/verify-keypair.js",
+    "check:versions": "node scripts/check-versions.js",
     "format": "prettier --write . && cd src-tauri && cargo fmt",
     "prepare": "lefthook install",
     "doctor": "npx react-doctor@latest"

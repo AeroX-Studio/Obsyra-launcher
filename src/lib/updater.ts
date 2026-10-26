@@ -153,6 +153,13 @@ class AutoUpdaterService {
       this.state = "error";
       this.errorMessage = err?.message || "Failed to download update package";
       this.emit();
+
+      setTimeout(() => {
+        if (this.state === "error") {
+          this.state = "idle";
+          this.emit();
+        }
+      }, 8000);
     }
   }
 

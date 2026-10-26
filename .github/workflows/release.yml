@@ -16,23 +16,55 @@ permissions:
   contents: write
 
 jobs:
+  preflight:
+    name: Preflight Signing & Version Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: install frontend dependencies
+        run: bun install
+
+      - name: verify version consistency
+        run: node scripts/check-versions.js
+
+      - name: run signing validator test suite
+        run: node scripts/test-signing-key.js
+
+      - name: preflight validate updater signing credentials
+        run: node scripts/prepare-signing-key.js --preflight-only
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          REQUIRE_SIGNING: "true"
+
   release:
+    name: Build & Release (${{ matrix.platform }} - ${{ matrix.target }})
+    needs: preflight
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: "macos-latest"
             target: "aarch64-apple-darwin"
-            args: "--target aarch64-apple-darwin"
           - platform: "macos-latest"
             target: "x86_64-apple-darwin"
-            args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04"
             target: "x86_64-unknown-linux-gnu"
-            args: ""
           - platform: "windows-latest"
             target: "x86_64-pc-windows-msvc"
-            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -60,7 +92,7 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.target }}
 
       - name: setup rust cache
         uses: swatinem/rust-cache@v2
@@ -76,20 +108,27 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
           REQUIRE_SIGNING: "true"
 
+      - name: verify signing environment propagation
+        run: |
+          node -e "
+            const key = process.env.TAURI_SIGNING_PRIVATE_KEY;
+            if (!key) {
+              console.error('::error::TAURI_SIGNING_PRIVATE_KEY is missing from runner environment.');
+              process.exit(1);
+            }
+            console.log('[Signing Environment] TAURI_SIGNING_PRIVATE_KEY propagated successfully to runner environment.');
+          "
+
       - name: build tauri app
         uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ env.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
-          TAURI_PRIVATE_KEY: ${{ env.TAURI_PRIVATE_KEY || secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ env.TAURI_KEY_PASSWORD || secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
         with:
           tagName: v__VERSION__
           releaseName: "Obsyra Launcher v__VERSION__"
           releaseBody: "See the assets to download this version and install."
-          releaseDraft: ${{ github.event.inputs.draft_release == 'false' && false || true }}
+          releaseDraft: ${{ !(github.event.inputs.draft_release == false || github.event.inputs.draft_release == 'false') }}
           prerelease: false
           uploadUpdaterJson: true
           updaterJsonPreferNsis: true
-          args: ${{ matrix.args }} --config src-tauri/tauri.updater.conf.json
+          args: --target ${{ matrix.target }} --config src-tauri/tauri.updater.conf.json

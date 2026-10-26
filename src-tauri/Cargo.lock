@@ -2963,7 +2963,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "obsy-launcher"
+name = "obsyra-launcher"
 version = "1.0.1"
 dependencies = [
  "async-process",
