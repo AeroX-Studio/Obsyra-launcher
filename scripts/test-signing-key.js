@@ -101,9 +101,12 @@ assertThrows(
 
 // 3. Public key passed instead of private key
 console.log("\n[Test Suite 3: Public Key Rejection]");
+// Synthetic 42-byte non-secret payload (Minisign Ed25519 public key binary box)
+const syntheticPubKeyPayload = Buffer.alloc(42, 0x58).toString("base64");
 const mockPubKeyText =
-  "untrusted comment: minisign public key: 1234567890ABCDEF\n" +
-  "RWRSTUdxVlhlNDZNWCt0cDNTaE1PSmx6eWxDc1V2RmhXTStsQmFYSjI3MHpvV21IYTZGcGdjNW8K";
+  "untrusted comment: minisign public key: 0000000000000000\n" +
+  syntheticPubKeyPayload;
+
 assertThrows(
   () => parseAndValidateKey(mockPubKeyText),
   "Provided key is a Minisign PUBLIC key",
