@@ -42,7 +42,7 @@ export class PluginErrorBoundary extends Component<Props, State> {
       return (
         <div
           className="border-destructive/30 bg-destructive/10 text-destructive flex items-center gap-1.5 rounded-lg border px-2 py-1 text-[11px] backdrop-blur-sm"
-          title={`Ошибка в аддоне ${this.props.addonId}: ${this.state.error?.message || "Unknown error"}`}
+          title={`Error in addon ${this.props.addonId}: ${this.state.error?.message || "Unknown error"}`}
         >
           <AlertCircle className="text-destructive h-3.5 w-3.5 shrink-0" />
           <span className="max-w-[110px] truncate font-medium">
@@ -52,7 +52,7 @@ export class PluginErrorBoundary extends Component<Props, State> {
             type="button"
             onClick={this.handleRetry}
             className="hover:bg-destructive/20 ml-1 cursor-pointer rounded p-0.5 transition-colors"
-            title="Перезагрузить виджет"
+            title="Reload widget"
           >
             <RotateCcw className="h-3 w-3" />
           </button>

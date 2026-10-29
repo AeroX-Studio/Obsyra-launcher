@@ -40,7 +40,7 @@ export const InstalledAddonCard: React.FC<InstalledAddonCardProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="border-border/40 bg-card/60 flex items-center justify-between gap-4 rounded-xl border p-3.5 backdrop-blur-sm">
+    <div className="border-border/40 bg-card/60 obsyra-glow-hover hover:border-purple-500/30 hover:bg-card/80 flex items-center justify-between gap-4 rounded-xl border p-3.5 backdrop-blur-sm transition-all duration-300">
       <div className="flex min-w-0 items-center gap-3">
         <div
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${

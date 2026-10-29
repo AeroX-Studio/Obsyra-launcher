@@ -7,6 +7,15 @@ use std::path::PathBuf;
 pub enum Language {
     English,
     Russian,
+    German,
+    French,
+    Spanish,
+    Portuguese,
+    Ukrainian,
+    Chinese,
+    Japanese,
+    #[serde(other)]
+    Unknown,
 }
 
 impl Default for Language {

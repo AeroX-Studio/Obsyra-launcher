@@ -1,0 +1,224 @@
+{
+  "translation": {
+    "app": {
+      "title": "Obsyra Launcher",
+      "skinNotFound": "Skin não encontrada"
+    },
+    "updater": {
+      "downloading": "Baixando atualização {{version}}...",
+      "downloadingProgress": "Baixando atualização {{version}}: {{progress}}%",
+      "downloaded": "Atualização baixada! Reiniciando..."
+    },
+    "console": {
+      "title": "Logs do Console",
+      "empty": "Nenhum log registrado ainda..."
+    },
+    "profile": {
+      "selectProfile": "Selecionar perfil",
+      "selectAccount": "Selecionar conta",
+      "noProfiles": "Nenhum perfil adicionado",
+      "microsoft": "Licença",
+      "offline": "Offline",
+      "addOfflineProfile": "Adicionar perfil offline",
+      "addMicrosoftProfile": "Adicionar conta Microsoft",
+      "microsoftLoginInstructions": "Siga as instruções abaixo para entrar:",
+      "microsoftLoginCode": "Código:",
+      "microsoftLoginLink": "Abrir página de login",
+      "microsoftLoginWaiting": "Aguardando autenticação...",
+      "microsoftLoginError": "Falha na autenticação",
+      "username": "Nome de usuário",
+      "enterNickname": "Digite seu apelido",
+      "add": "Adicionar",
+      "addProfileTitle": "Adicionar Perfil",
+      "deleteTooltip": "Excluir perfil"
+    },
+    "version": {
+      "selectVersion": "Selecionar Versão",
+      "noVersions": "Nenhuma versão disponível",
+      "openFolder": "Abrir pasta da instância",
+      "deleteInstance": "Excluir Instância",
+      "confirmDelete": "Tem certeza de que deseja excluir esta instância? Esta ação não pode ser desfeita.",
+      "delete": "Excluir",
+      "searchPlaceholder": "Pesquisar versões...",
+      "noVersionsFound": "Nenhuma versão encontrada",
+      "installed": "Instâncias Instaladas",
+      "releases": "Versões Oficiais",
+      "snapshots": "Snapshots & Outras",
+      "createInstance": "Criar Instância",
+      "createInstanceTitle": "Criar Nova Instância",
+      "createInstanceDesc": "Escolha a versão do Minecraft e o carregador de mods.",
+      "instanceName": "Nome da Instância",
+      "instanceNamePlaceholder": "ex: Fabric 1.21.4",
+      "minecraftVersion": "Versão do Minecraft",
+      "loader": "Carregador de Mods",
+      "loaderFabric": "Fabric (Recomendado)",
+      "loaderNeoForge": "NeoForge (Moderno)",
+      "loaderForge": "Forge (Clássico)",
+      "loaderQuilt": "Quilt",
+      "loaderVanilla": "Vanilla (Padrão)",
+      "create": "Criar"
+    },
+    "launch": {
+      "play": "Jogar",
+      "download": "Baixar",
+      "starting": "Preparando...",
+      "downloading_java": "Baixando Java...",
+      "extracting_java": "Extraindo Java...",
+      "downloading_libraries": "Baixando bibliotecas...",
+      "downloading_assets": "Baixando recursos...",
+      "checking_assets": "Verificando recursos...",
+      "checking_natives": "Verificando binários...",
+      "checking_libraries": "Verificando bibliotecas...",
+      "extracting_natives": "Extraindo binários...",
+      "installing_version": "Instalando versão...",
+      "installing_assets": "Instalando recursos...",
+      "installing_libraries": "Instalando bibliotecas...",
+      "launching": "Iniciando Minecraft...",
+      "success": "Sucesso!",
+      "running": "O jogo está aberto"
+    },
+    "settings": {
+      "title": "Configurações",
+      "game": "Jogo",
+      "window": "Janela",
+      "versions": "Versões",
+      "memory": "Alocação de memória (MB)",
+      "autoMemory": "Detectar memória automaticamente",
+      "jvmArgs": "Argumentos da JVM",
+      "applyAikar": "Aplicar flags do Aikar (G1GC)",
+      "aikarHint": "As flags do Aikar otimizam a coleta de lixo e eliminam travamentos.",
+      "javaPath": "Caminho do Java",
+      "closeAfterLaunch": "Fechar inicializador após iniciar",
+      "width": "Largura",
+      "height": "Altura",
+      "fullscreen": "Tela cheia",
+      "showReleases": "Exibir lançamentos",
+      "showSnapshots": "Exibir snapshots",
+      "showOld": "Exibir versões antigas (Alpha/Beta)",
+      "startupTime": "Inicialização: {{ms}} ms"
+    },
+    "onboarding": {
+      "welcome": "Bem-vindo ao Obsyra Launcher",
+      "description": "Experimente o Minecraft com animações fluidas, desempenho nativo e uma interface elegante.",
+      "getStarted": "Começar",
+      "profilesTitle": "Configure sua conta",
+      "profilesDesc": "Adicione sua conta Microsoft ou jogue offline.",
+      "continue": "Continuar",
+      "readyTitle": "Pronto para jogar!",
+      "readyDesc": "Tudo está configurado. Divirta-se!",
+      "finish": "Iniciar"
+    },
+    "common": {
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "save": "Salvar",
+      "author": "Autor",
+      "version": "Versão"
+    },
+    "addons": {
+      "title": "Addons",
+      "subtitle": "Extensões modulares para personalizar seu launcher",
+      "search": "Pesquisar addons...",
+      "notFound": "Nenhum addon encontrado",
+      "install": "Instalar",
+      "installed": "Instalado",
+      "reinstall": "Reinstalar / Atualizar",
+      "installZip": "Instalar de .zip",
+      "installZipBtn": "De Arquivo",
+      "installUrl": "Instalar de URL",
+      "installUrlBtn": "De URL",
+      "urlDialogTitle": "Instalar Addon via URL",
+      "urlDialogDesc": "Insira o link direto de download de um arquivo .zip:",
+      "urlInputPlaceholder": "https://example.com/addon.zip",
+      "downloadingFromUrl": "Baixando arquivo...",
+      "downloadError": "Falha ao baixar addon da URL",
+      "refreshCatalog": "Atualizar Catálogo",
+      "catalogRefreshed": "Catálogo atualizado",
+      "uninstall": "Desinstalar addon",
+      "settings": "Configurações do Addon",
+      "settingsTitle": "Configurações:",
+      "update": "Atualizar",
+      "updateAvailable": "Atualização disponível",
+      "verifiedAuthor": "Desenvolvedor oficial verificado",
+      "thirdPartyAuthor": "Addon de terceiros",
+      "trustLevels": {
+        "official": "Addon Oficial Obsyra",
+        "community": "Addon da Comunidade Verificado",
+        "custom": "Addon de Terceiros (Não verificado)"
+      },
+      "trustBadge": {
+        "official": "Obsyra Oficial",
+        "community": "Comunidade",
+        "custom": "Personalizado"
+      },
+      "noInstalled": "Nenhum addon instalado ainda",
+      "noInstalledDesc": "Explore a Loja para adicionar novos recursos e integrações.",
+      "securityTitle": "Instalar Addon",
+      "verified": "Verificado",
+      "securitySubtitle": "Revisão de segurança e permissões",
+      "thirdPartyWarningTitle": "Aviso: Addon de Terceiros",
+      "thirdPartyWarningDesc": "Instale apenas addons de autores confiáveis.",
+      "requestedPermissions": "Permissões Solicitadas:",
+      "noPermissionsRequired": "Este addon não requer permissões especiais.",
+      "allowAndInstall": "Permitir e Instalar",
+      "installing": "Instalando...",
+      "tabs": {
+        "store": "Loja",
+        "installed": "Instalados"
+      },
+      "categories": {
+        "all": "Todos",
+        "utility": "Utilitários",
+        "integration": "Integrações",
+        "customization": "Aparência",
+        "performance": "Desempenho"
+      },
+      "permissions": {
+        "gameLifecycle": {
+          "label": "Gerenciamento de Ciclo de Jogo",
+          "desc": "Pode configurar argumentos JVM e monitorar processos"
+        },
+        "gameLaunch": {
+          "label": "Controle de Inicialização",
+          "desc": "Pode iniciar o jogo Minecraft"
+        },
+        "gameProfiles": {
+          "label": "Informações da Conta",
+          "desc": "Acesso ao nome do perfil e versão selecionada"
+        },
+        "networkFetch": {
+          "label": "Acesso à Rede (Internet)",
+          "desc": "Pode acessar APIs e servidores externos"
+        },
+        "storageLocal": {
+          "label": "Armazenamento Local",
+          "desc": "Salvar configurações no disco"
+        },
+        "uiSlots": {
+          "label": "Interface e Widgets",
+          "desc": "Incorporar botões e elementos na interface do launcher"
+        },
+        "uiNotifications": {
+          "label": "Notificações",
+          "desc": "Exibir notificações do sistema"
+        },
+        "fsInstances": {
+          "label": "Arquivos de Instância",
+          "desc": "Ler e gravar arquivos diretamente nas pastas das instâncias"
+        }
+      }
+    },
+    "crash": {
+      "detected": "Problema de inicialização detectado",
+      "actionSuccess": "Ação aplicada: {{message}}",
+      "actionFailed": "Falha ao aplicar ação",
+      "diagnostics": "Diagnóstico Inteligente",
+      "quickFixes": "Soluções Rápidas:"
+    },
+    "playtime": {
+      "title": "Tempo de Jogo",
+      "total": "Tempo total: {{time}}"
+    }
+  }
+}
+

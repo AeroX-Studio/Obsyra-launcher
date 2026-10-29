@@ -8,21 +8,23 @@ const CATALOG_STORAGE_KEY = "obsy:addons_catalog:v2";
 
 export function getCachedCatalog(): AddonManifest[] {
   let list: AddonManifest[] = [];
-  if (import.meta.env.DEV) {
-    list = localCatalog as AddonManifest[];
-  } else {
-    try {
-      const raw = localStorage.getItem(CATALOG_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          list = parsed;
-        }
+  try {
+    const raw = localStorage.getItem(CATALOG_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        list = parsed;
       }
-    } catch (e) {
-      console.warn("[AddonCatalog] Failed to read cached catalog:", e);
     }
+  } catch (e) {
+    console.warn("[AddonCatalog] Failed to read cached catalog:", e);
   }
+
+  // Fallback to bundled official catalog if storage is empty or corrupt
+  if (list.length === 0) {
+    list = localCatalog as AddonManifest[];
+  }
+
   return list.map((item) => ({ ...item, verified: true }));
 }
 

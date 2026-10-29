@@ -1,0 +1,224 @@
+{
+  "translation": {
+    "app": {
+      "title": "Obsyra Launcher",
+      "skinNotFound": "Скін не знайдено"
+    },
+    "updater": {
+      "downloading": "Завантаження оновлення {{version}}...",
+      "downloadingProgress": "Завантаження оновлення {{version}}: {{progress}}%",
+      "downloaded": "Оновлення завантажено! Перезапуск..."
+    },
+    "console": {
+      "title": "Журнал консолі",
+      "empty": "Логи ще не записані..."
+    },
+    "profile": {
+      "selectProfile": "Оберіть профіль",
+      "selectAccount": "Оберіть обліковий запис",
+      "noProfiles": "Профілі не додано",
+      "microsoft": "Ліцензія",
+      "offline": "Офлайн",
+      "addOfflineProfile": "Додати офлайн профіль",
+      "addMicrosoftProfile": "Увійти через Microsoft",
+      "microsoftLoginInstructions": "Дотримуйтесь інструкцій нижче для входу:",
+      "microsoftLoginCode": "Код:",
+      "microsoftLoginLink": "Відкрити сторінку входу",
+      "microsoftLoginWaiting": "Очікування авторизації...",
+      "microsoftLoginError": "Помилка авторизації",
+      "username": "Ім'я користувача",
+      "enterNickname": "Введіть ваш нікнейм",
+      "add": "Додати",
+      "addProfileTitle": "Додати профіль",
+      "deleteTooltip": "Видалити профіль"
+    },
+    "version": {
+      "selectVersion": "Оберіть версію",
+      "noVersions": "Немає доступних версій",
+      "openFolder": "Відкрити папку збірки",
+      "deleteInstance": "Видалити збірку",
+      "confirmDelete": "Ви впевнені, що хочете видалити цю збірку? Цю дію неможливо скасувати.",
+      "delete": "Видалити",
+      "searchPlaceholder": "Пошук версій...",
+      "noVersionsFound": "Версій не знайдено",
+      "installed": "Встановлені збірки",
+      "releases": "Офіційні релізи",
+      "snapshots": "Снапшоти та інші",
+      "createInstance": "Створити збірку",
+      "createInstanceTitle": "Створити нову збірку",
+      "createInstanceDesc": "Оберіть версію гри та завантажувач модів для ізольованого запуску.",
+      "instanceName": "Назва збірки",
+      "instanceNamePlaceholder": "наприклад Fabric 1.21.4",
+      "minecraftVersion": "Версія Minecraft",
+      "loader": "Завантажувач модів",
+      "loaderFabric": "Fabric (Рекомендовано)",
+      "loaderNeoForge": "NeoForge (Сучасний)",
+      "loaderForge": "Forge (Класичний)",
+      "loaderQuilt": "Quilt",
+      "loaderVanilla": "Vanilla (Чиста гра)",
+      "create": "Створити"
+    },
+    "launch": {
+      "play": "Грати",
+      "download": "Завантажити",
+      "starting": "Підготовка...",
+      "downloading_java": "Завантаження Java...",
+      "extracting_java": "Розпакування Java...",
+      "downloading_libraries": "Завантаження бібліотек...",
+      "downloading_assets": "Завантаження ресурсів...",
+      "checking_assets": "Перевірка ресурсів...",
+      "checking_natives": "Перевірка бібліотек...",
+      "checking_libraries": "Перевірка компонентів...",
+      "extracting_natives": "Розпакування компонентів...",
+      "installing_version": "Встановлення версії...",
+      "installing_assets": "Встановлення ресурсів...",
+      "installing_libraries": "Встановлення бібліотек...",
+      "launching": "Запуск Minecraft...",
+      "success": "Успішно!",
+      "running": "Гра запущена"
+    },
+    "settings": {
+      "title": "Налаштування",
+      "game": "Гра",
+      "window": "Вікно",
+      "versions": "Версії",
+      "memory": "Виділення пам'яті (МБ)",
+      "autoMemory": "Автоматично визначати пам'ять",
+      "jvmArgs": "Аргументи JVM",
+      "applyAikar": "Застосувати прапори Aikar (G1GC)",
+      "aikarHint": "Прапори Aikar оптимізують збирання сміття та усувають лаги.",
+      "javaPath": "Шлях до Java",
+      "closeAfterLaunch": "Закривати лаунчер після запуску",
+      "width": "Ширина",
+      "height": "Висота",
+      "fullscreen": "Повноекранний режим",
+      "showReleases": "Показувати релізи",
+      "showSnapshots": "Показувати снапшоти",
+      "showOld": "Показувати старі версії (Alpha/Beta)",
+      "startupTime": "Запуск: {{ms}} мс"
+    },
+    "onboarding": {
+      "welcome": "Ласкаво просимо до Obsyra Launcher",
+      "description": "Грайте в Minecraft з плавними анімаціями, нативною продуктивністю та стильним інтерфейсом.",
+      "getStarted": "Почати",
+      "profilesTitle": "Налаштуйте обліковий запис",
+      "profilesDesc": "Додайте ліцензію Microsoft або грайте офлайн.",
+      "continue": "Продовжити",
+      "readyTitle": "Все готово!",
+      "readyDesc": "Усе налаштовано. Приємної гри!",
+      "finish": "Запустити"
+    },
+    "common": {
+      "cancel": "Скасувати",
+      "close": "Закрити",
+      "save": "Зберегти",
+      "author": "Автор",
+      "version": "Версія"
+    },
+    "addons": {
+      "title": "Адони",
+      "subtitle": "Модульні розширення для налаштування вашого лаунчера",
+      "search": "Пошук адонів...",
+      "notFound": "Адонів не знайдено",
+      "install": "Встановити",
+      "installed": "Встановлено",
+      "reinstall": "Перевстановити / Оновити",
+      "installZip": "Встановити з .zip",
+      "installZipBtn": "З файлу",
+      "installUrl": "Встановити з URL",
+      "installUrlBtn": "З посилання",
+      "urlDialogTitle": "Встановити адон з URL",
+      "urlDialogDesc": "Введіть пряме посилання на .zip архів адону:",
+      "urlInputPlaceholder": "https://example.com/addon.zip",
+      "downloadingFromUrl": "Завантаження архіву...",
+      "downloadError": "Помилка завантаження адону з URL",
+      "refreshCatalog": "Оновити каталог",
+      "catalogRefreshed": "Каталог оновлено",
+      "uninstall": "Видалити адон",
+      "settings": "Налаштування адону",
+      "settingsTitle": "Налаштування:",
+      "update": "Оновити",
+      "updateAvailable": "Доступне оновлення",
+      "verifiedAuthor": "Офіційний розробник",
+      "thirdPartyAuthor": "Сторонній адон",
+      "trustLevels": {
+        "official": "Офіційний адон Obsyra",
+        "community": "Перевірений адон спільноти",
+        "custom": "Сторонній адон (Неперевірений)"
+      },
+      "trustBadge": {
+        "official": "Obsyra Official",
+        "community": "Спільнота",
+        "custom": "Користувацький"
+      },
+      "noInstalled": "Адони ще не встановлені",
+      "noInstalledDesc": "Дослідіть вкладку Магазин, щоб додати нові функції.",
+      "securityTitle": "Встановити адон",
+      "verified": "Перевірено",
+      "securitySubtitle": "Огляд безпеки та дозволів",
+      "thirdPartyWarningTitle": "Увага: Сторонній адон",
+      "thirdPartyWarningDesc": "Встановлюйте адони лише від авторів, яким ви довіряєте.",
+      "requestedPermissions": "Запитувані дозволи:",
+      "noPermissionsRequired": "Цей адон не потребує особливих дозволів.",
+      "allowAndInstall": "Дозволити та встановити",
+      "installing": "Встановлення...",
+      "tabs": {
+        "store": "Магазин",
+        "installed": "Встановлені"
+      },
+      "categories": {
+        "all": "Всі",
+        "utility": "Утиліти",
+        "integration": "Інтеграції",
+        "customization": "Вигляд",
+        "performance": "Продуктивність"
+      },
+      "permissions": {
+        "gameLifecycle": {
+          "label": "Управління життєвим циклом гри",
+          "desc": "Може налаштовувати аргументи JVM та відстежувати процеси"
+        },
+        "gameLaunch": {
+          "label": "Контроль запуску гри",
+          "desc": "Може ініціювати запуск Minecraft"
+        },
+        "gameProfiles": {
+          "label": "Інформація про профіль",
+          "desc": "Доступ до назви профілю та вибраної версії"
+        },
+        "networkFetch": {
+          "label": "Доступ до мережі (Інтернет)",
+          "desc": "Може надсилати запити до зовнішніх серверів та API"
+        },
+        "storageLocal": {
+          "label": "Локальне сховище",
+          "desc": "Збереження налаштувань на диску"
+        },
+        "uiSlots": {
+          "label": "Інтерфейс і віджети",
+          "desc": "Вбудовування кнопок та панелей у вікно лаунчера"
+        },
+        "uiNotifications": {
+          "label": "Сповіщення",
+          "desc": "Показ сповіщень у лаунчері"
+        },
+        "fsInstances": {
+          "label": "Файли збірок",
+          "desc": "Читання та запис файлів у папках гри"
+        }
+      }
+    },
+    "crash": {
+      "detected": "Виявлено проблему запуску",
+      "actionSuccess": "Дію застосовано: {{message}}",
+      "actionFailed": "Не вдалося застосувати дію",
+      "diagnostics": "Розумна діагностика",
+      "quickFixes": "Швидкі виправлення:"
+    },
+    "playtime": {
+      "title": "Час гри",
+      "total": "Загальний час: {{time}}"
+    }
+  }
+}
+

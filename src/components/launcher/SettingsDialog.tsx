@@ -375,11 +375,13 @@ export const SettingsDialog = () => {
           {/* About Tab with Branding & Updater */}
           <TabsContent value="about" className="flex flex-col gap-4 py-4">
             <div className="bg-card/40 border-border/40 flex items-center gap-4 rounded-xl border p-4">
-              <img
-                src="/obsyra-logo.png"
-                alt="Obsyra Launcher"
-                className="h-16 w-16 object-contain drop-shadow-md"
-              />
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-black p-1.5 shadow-md ring-1 ring-white/15">
+                <img
+                  src="/obsyra-logo.png"
+                  alt="Obsyra Launcher"
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <div className="flex flex-col">
                 <h3 className="text-lg font-bold tracking-tight">Obsyra Launcher</h3>
                 <p className="text-xs font-semibold text-primary">Obsyra Studio by AeroX</p>

@@ -1,0 +1,224 @@
+{
+  "translation": {
+    "app": {
+      "title": "Obsyra Launcher",
+      "skinNotFound": "Skin nicht gefunden"
+    },
+    "updater": {
+      "downloading": "Update {{version}} wird heruntergeladen...",
+      "downloadingProgress": "Update {{version}} wird heruntergeladen: {{progress}}%",
+      "downloaded": "Update heruntergeladen! Neustart..."
+    },
+    "console": {
+      "title": "Konsolenprotokolle",
+      "empty": "Noch keine Protokolle vorhanden..."
+    },
+    "profile": {
+      "selectProfile": "Profil auswählen",
+      "selectAccount": "Konto auswählen",
+      "noProfiles": "Keine Profile hinzugefügt",
+      "microsoft": "Lizenz",
+      "offline": "Offline",
+      "addOfflineProfile": "Offline-Profil hinzufügen",
+      "addMicrosoftProfile": "Microsoft-Konto hinzufügen",
+      "microsoftLoginInstructions": "Befolgen Sie die folgenden Anweisungen zum Anmelden:",
+      "microsoftLoginCode": "Code:",
+      "microsoftLoginLink": "Anmeldeseite öffnen",
+      "microsoftLoginWaiting": "Warten auf Authentifizierung...",
+      "microsoftLoginError": "Authentifizierung fehlgeschlagen",
+      "username": "Benutzername",
+      "enterNickname": "Geben Sie Ihren Spielernamen ein",
+      "add": "Hinzufügen",
+      "addProfileTitle": "Profil hinzufügen",
+      "deleteTooltip": "Profil löschen"
+    },
+    "version": {
+      "selectVersion": "Version auswählen",
+      "noVersions": "Keine Versionen verfügbar",
+      "openFolder": "Instanzordner öffnen",
+      "deleteInstance": "Instanz löschen",
+      "confirmDelete": "Möchten Sie diese Instanz wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+      "delete": "Löschen",
+      "searchPlaceholder": "Versionen durchsuchen...",
+      "noVersionsFound": "Keine Versionen gefunden",
+      "installed": "Installierte Instanzen",
+      "releases": "Offizielle Versionen",
+      "snapshots": "Snapshots & Andere",
+      "createInstance": "Instanz erstellen",
+      "createInstanceTitle": "Neue Instanz erstellen",
+      "createInstanceDesc": "Wählen Sie Minecraft-Version und Mod-Loader für isoliertes Spielen.",
+      "instanceName": "Instanzname",
+      "instanceNamePlaceholder": "z.B. Fabric 1.21.4",
+      "minecraftVersion": "Minecraft-Version",
+      "loader": "Mod-Loader",
+      "loaderFabric": "Fabric (Empfohlen)",
+      "loaderNeoForge": "NeoForge (Modern Forge)",
+      "loaderForge": "Forge (Klassisch)",
+      "loaderQuilt": "Quilt",
+      "loaderVanilla": "Vanilla (Standard)",
+      "create": "Erstellen"
+    },
+    "launch": {
+      "play": "Spielen",
+      "download": "Herunterladen",
+      "starting": "Vorbereitung...",
+      "downloading_java": "Java herunterladen...",
+      "extracting_java": "Java entpacken...",
+      "downloading_libraries": "Bibliotheken herunterladen...",
+      "downloading_assets": "Assets herunterladen...",
+      "checking_assets": "Assets prüfen...",
+      "checking_natives": "Natives prüfen...",
+      "checking_libraries": "Bibliotheken prüfen...",
+      "extracting_natives": "Natives extrahieren...",
+      "installing_version": "Version installieren...",
+      "installing_assets": "Assets installieren...",
+      "installing_libraries": "Bibliotheken installieren...",
+      "launching": "Minecraft startet...",
+      "success": "Erfolgreich!",
+      "running": "Spiel läuft"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "game": "Spiel",
+      "window": "Fenster",
+      "versions": "Versionen",
+      "memory": "Speicherzuweisung (MB)",
+      "autoMemory": "Speicher automatisch ermitteln",
+      "jvmArgs": "JVM-Argumente",
+      "applyAikar": "Aikar's Flags anwenden (G1GC)",
+      "aikarHint": "Aikar's Flags optimieren die Garbage Collection und verhindern Lag-Spitzen.",
+      "javaPath": "Java-Pfad",
+      "closeAfterLaunch": "Launcher nach Spielstart schließen",
+      "width": "Breite",
+      "height": "Höhe",
+      "fullscreen": "Vollbildmodus",
+      "showReleases": "Releases anzeigen",
+      "showSnapshots": "Snapshots anzeigen",
+      "showOld": "Alte Versionen (Alpha/Beta)",
+      "startupTime": "Startzeit: {{ms}} ms"
+    },
+    "onboarding": {
+      "welcome": "Willkommen bei Obsyra Launcher",
+      "description": "Erlebe Minecraft mit flüssigen Animationen, nativer Leistung und edlem Design.",
+      "getStarted": "Loslegen",
+      "profilesTitle": "Konto einrichten",
+      "profilesDesc": "Füge deine Microsoft-Lizenz hinzu oder spiele offline.",
+      "continue": "Weiter",
+      "readyTitle": "Bereit zum Spielen!",
+      "readyDesc": "Alles ist eingerichtet. Viel Spaß!",
+      "finish": "Starten"
+    },
+    "common": {
+      "cancel": "Abbrechen",
+      "close": "Schließen",
+      "save": "Speichern",
+      "author": "Autor",
+      "version": "Version"
+    },
+    "addons": {
+      "title": "Addons",
+      "subtitle": "Modulare Erweiterungen für deinen Launcher",
+      "search": "Addons durchsuchen...",
+      "notFound": "Keine Addons gefunden",
+      "install": "Installieren",
+      "installed": "Installiert",
+      "reinstall": "Neu installieren / Aktualisieren",
+      "installZip": "Aus .zip installieren",
+      "installZipBtn": "Aus Datei",
+      "installUrl": "Aus URL installieren",
+      "installUrlBtn": "Aus URL",
+      "urlDialogTitle": "Addon über URL installieren",
+      "urlDialogDesc": "Geben Sie einen direkten Download-Link zu einem Addon-.zip-Archiv ein:",
+      "urlInputPlaceholder": "https://example.com/addon.zip",
+      "downloadingFromUrl": "Archiv wird heruntergeladen...",
+      "downloadError": "Herunterladen des Addons fehlgeschlagen",
+      "refreshCatalog": "Katalog aktualisieren",
+      "catalogRefreshed": "Katalog aktualisiert",
+      "uninstall": "Addon deinstallieren",
+      "settings": "Addon-Einstellungen",
+      "settingsTitle": "Einstellungen:",
+      "update": "Aktualisieren",
+      "updateAvailable": "Update verfügbar",
+      "verifiedAuthor": "Offiziell verifizierter Entwickler",
+      "thirdPartyAuthor": "Drittanbieter-Addon",
+      "trustLevels": {
+        "official": "Offizielles Obsyra-Addon",
+        "community": "Verifiziertes Community-Addon",
+        "custom": "Drittanbieter-Addon (Ungeprüft)"
+      },
+      "trustBadge": {
+        "official": "Obsyra Offiziell",
+        "community": "Community",
+        "custom": "Benutzerdefiniert"
+      },
+      "noInstalled": "Noch keine Addons installiert",
+      "noInstalledDesc": "Entdecke den Store-Tab, um neue Funktionen hinzuzufügen.",
+      "securityTitle": "Addon installieren",
+      "verified": "Verifiziert",
+      "securitySubtitle": "Sicherheits- und Berechtigungsüberprüfung",
+      "thirdPartyWarningTitle": "Warnung: Drittanbieter-Addon",
+      "thirdPartyWarningDesc": "Installiere nur Addons von vertrauenswürdigen Autoren.",
+      "requestedPermissions": "Angeforderte Berechtigungen:",
+      "noPermissionsRequired": "Dieses Addon benötigt keine speziellen Berechtigungen.",
+      "allowAndInstall": "Erlauben & Installieren",
+      "installing": "Installiere...",
+      "tabs": {
+        "store": "Store",
+        "installed": "Installiert"
+      },
+      "categories": {
+        "all": "Alle",
+        "utility": "Werkzeuge",
+        "integration": "Integrationen",
+        "customization": "Design & Optik",
+        "performance": "Leistung"
+      },
+      "permissions": {
+        "gameLifecycle": {
+          "label": "Spiel-Lebenszyklus-Verwaltung",
+          "desc": "Kann JVM-Argumente und Spielprozesse steuern"
+        },
+        "gameLaunch": {
+          "label": "Spielstart-Steuerung",
+          "desc": "Kann Spielstarts initiieren"
+        },
+        "gameProfiles": {
+          "label": "Kontoinformationen",
+          "desc": "Zugriff auf den Profilnamen und die gewählte Version"
+        },
+        "networkFetch": {
+          "label": "Netzwerkzugriff (Internet)",
+          "desc": "Kann Daten von externen APIs abrufen"
+        },
+        "storageLocal": {
+          "label": "Lokaler Speicher",
+          "desc": "Einstellungen dauerhaft auf der Festplatte speichern"
+        },
+        "uiSlots": {
+          "label": "UI & Widgets",
+          "desc": "Benutzerdefinierte Schaltflächen und Widgets einbetten"
+        },
+        "uiNotifications": {
+          "label": "Benachrichtigungen",
+          "desc": "System-Benachrichtigungen anzeigen"
+        },
+        "fsInstances": {
+          "label": "Instanz-Dateien",
+          "desc": "Dateien direkt in Instanzordnern lesen und schreiben"
+        }
+      }
+    },
+    "crash": {
+      "detected": "Startproblem erkannt",
+      "actionSuccess": "Aktion ausgeführt: {{message}}",
+      "actionFailed": "Aktion konnte nicht ausgeführt werden",
+      "diagnostics": "Intelligente Diagnose",
+      "quickFixes": "Schnellbehebungen:"
+    },
+    "playtime": {
+      "title": "Spielzeit",
+      "total": "Gesamte Spielzeit: {{time}}"
+    }
+  }
+}
+

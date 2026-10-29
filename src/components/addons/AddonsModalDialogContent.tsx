@@ -175,8 +175,8 @@ export const AddonsModalDialogContent: React.FC = () => {
           <span>{uploadError}</span>
           <button
             onClick={() => setUploadError(null)}
-            className="cursor-pointer font-bold"
-            aria-label="Закрыть"
+            className="cursor-pointer font-bold opacity-75 hover:opacity-100"
+            aria-label="Close"
           >
             ✕
           </button>

@@ -23,6 +23,18 @@ import {
   m,
 } from "framer-motion";
 
+const LANGUAGE_CODE_MAP: Record<string, string> = {
+  ENGLISH: "en",
+  RUSSIAN: "ru",
+  GERMAN: "de",
+  FRENCH: "fr",
+  SPANISH: "es",
+  PORTUGUESE: "pt",
+  UKRAINIAN: "uk",
+  CHINESE: "zh",
+  JAPANESE: "ja",
+};
+
 const App = () => {
   const {
     state,
@@ -94,7 +106,7 @@ const App = () => {
 
   useEffect(() => {
     if (state?.language) {
-      i18n.changeLanguage(state.language === "RUSSIAN" ? "ru" : "en");
+      i18n.changeLanguage(LANGUAGE_CODE_MAP[state.language] || "en");
     }
   }, [state?.language, i18n]);
 

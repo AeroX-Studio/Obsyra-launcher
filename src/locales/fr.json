@@ -1,0 +1,224 @@
+{
+  "translation": {
+    "app": {
+      "title": "Obsyra Launcher",
+      "skinNotFound": "Skin introuvable"
+    },
+    "updater": {
+      "downloading": "Téléchargement de la mise à jour {{version}}...",
+      "downloadingProgress": "Téléchargement de la mise à jour {{version}} : {{progress}}%",
+      "downloaded": "Mise à jour téléchargée ! Redémarrage..."
+    },
+    "console": {
+      "title": "Journaux de la console",
+      "empty": "Aucun journal pour le moment..."
+    },
+    "profile": {
+      "selectProfile": "Sélectionner un profil",
+      "selectAccount": "Sélectionner un compte",
+      "noProfiles": "Aucun profil ajouté",
+      "microsoft": "Licence",
+      "offline": "Hors ligne",
+      "addOfflineProfile": "Ajouter un profil hors ligne",
+      "addMicrosoftProfile": "Ajouter un compte Microsoft",
+      "microsoftLoginInstructions": "Suivez les instructions ci-dessous pour vous connecter :",
+      "microsoftLoginCode": "Code :",
+      "microsoftLoginLink": "Ouvrir la page de connexion",
+      "microsoftLoginWaiting": "En attente d'authentification...",
+      "microsoftLoginError": "Échec de l'authentification",
+      "username": "Nom d'utilisateur",
+      "enterNickname": "Entrez votre pseudonyme",
+      "add": "Ajouter",
+      "addProfileTitle": "Ajouter un profil",
+      "deleteTooltip": "Supprimer le profil"
+    },
+    "version": {
+      "selectVersion": "Sélectionner la version",
+      "noVersions": "Aucune version disponible",
+      "openFolder": "Ouvrir le dossier de l'instance",
+      "deleteInstance": "Supprimer l'instance",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette instance ? Cette action est irréversible.",
+      "delete": "Supprimer",
+      "searchPlaceholder": "Rechercher des versions...",
+      "noVersionsFound": "Aucune version trouvée",
+      "installed": "Instances installées",
+      "releases": "Versions officielles",
+      "snapshots": "Snapshots & Autres",
+      "createInstance": "Créer une instance",
+      "createInstanceTitle": "Créer une nouvelle instance",
+      "createInstanceDesc": "Choisissez la version de Minecraft et le chargeur de mods.",
+      "instanceName": "Nom de l'instance",
+      "instanceNamePlaceholder": "ex. Fabric 1.21.4",
+      "minecraftVersion": "Version Minecraft",
+      "loader": "Mod Loader",
+      "loaderFabric": "Fabric (Recommandé)",
+      "loaderNeoForge": "NeoForge (Moderne)",
+      "loaderForge": "Forge (Classique)",
+      "loaderQuilt": "Quilt",
+      "loaderVanilla": "Vanilla (Sans mods)",
+      "create": "Créer"
+    },
+    "launch": {
+      "play": "Jouer",
+      "download": "Télécharger",
+      "starting": "Préparation...",
+      "downloading_java": "Téléchargement de Java...",
+      "extracting_java": "Extraction de Java...",
+      "downloading_libraries": "Téléchargement des bibliothèques...",
+      "downloading_assets": "Téléchargement des ressources...",
+      "checking_assets": "Vérification des ressources...",
+      "checking_natives": "Vérification des bibliothèques natives...",
+      "checking_libraries": "Vérification des bibliothèques...",
+      "extracting_natives": "Extraction des bibliothèques natives...",
+      "installing_version": "Installation de la version...",
+      "installing_assets": "Installation des ressources...",
+      "installing_libraries": "Installation des bibliothèques...",
+      "launching": "Démarrage de Minecraft...",
+      "success": "Succès !",
+      "running": "Le jeu est en cours d'exécution"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "game": "Jeu",
+      "window": "Fenêtre",
+      "versions": "Versions",
+      "memory": "Allocation mémoire (Mo)",
+      "autoMemory": "Détection automatique de la mémoire",
+      "jvmArgs": "Arguments JVM",
+      "applyAikar": "Appliquer les drapeaux d'Aikar (G1GC)",
+      "aikarHint": "Les drapeaux d'Aikar optimisent le ramasse-miettes et éliminent les baisses d'IPS.",
+      "javaPath": "Chemin Java",
+      "closeAfterLaunch": "Fermer le lanceur après le démarrage",
+      "width": "Largeur",
+      "height": "Hauteur",
+      "fullscreen": "Plein écran",
+      "showReleases": "Afficher les versions officielles",
+      "showSnapshots": "Afficher les snapshots",
+      "showOld": "Afficher les anciennes versions (Alpha/Beta)",
+      "startupTime": "Démarrage : {{ms}} ms"
+    },
+    "onboarding": {
+      "welcome": "Bienvenue sur Obsyra Launcher",
+      "description": "Découvrez Minecraft avec des animations fluides, des performances natives et une interface soignée.",
+      "getStarted": "Commencer",
+      "profilesTitle": "Configurez votre compte",
+      "profilesDesc": "Ajoutez votre licence Microsoft ou jouez hors ligne.",
+      "continue": "Continuer",
+      "readyTitle": "Prêt à jouer !",
+      "readyDesc": "Tout est prêt. Bon jeu !",
+      "finish": "Lancer"
+    },
+    "common": {
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "save": "Enregistrer",
+      "author": "Auteur",
+      "version": "Version"
+    },
+    "addons": {
+      "title": "Addons",
+      "subtitle": "Extensions modulaires pour personnaliser votre lanceur",
+      "search": "Rechercher des addons...",
+      "notFound": "Aucun addon trouvé",
+      "install": "Installer",
+      "installed": "Installé",
+      "reinstall": "Réinstaller / Mettre à jour",
+      "installZip": "Installer depuis un .zip",
+      "installZipBtn": "Depuis un fichier",
+      "installUrl": "Installer depuis une URL",
+      "installUrlBtn": "Depuis une URL",
+      "urlDialogTitle": "Installer un addon depuis une URL",
+      "urlDialogDesc": "Entrez un lien de téléchargement direct vers une archive .zip :",
+      "urlInputPlaceholder": "https://example.com/addon.zip",
+      "downloadingFromUrl": "Téléchargement de l'archive...",
+      "downloadError": "Échec du téléchargement de l'addon",
+      "refreshCatalog": "Actualiser le catalogue",
+      "catalogRefreshed": "Catalogue actualisé",
+      "uninstall": "Désinstaller l'addon",
+      "settings": "Paramètres de l'addon",
+      "settingsTitle": "Paramètres :",
+      "update": "Mettre à jour",
+      "updateAvailable": "Mise à jour disponible",
+      "verifiedAuthor": "Développeur officiel certifié",
+      "thirdPartyAuthor": "Addon tiers",
+      "trustLevels": {
+        "official": "Addon officiel Obsyra",
+        "community": "Addon communautaire vérifié",
+        "custom": "Addon tiers (non vérifié)"
+      },
+      "trustBadge": {
+        "official": "Obsyra Officiel",
+        "community": "Communauté",
+        "custom": "Personnalisé"
+      },
+      "noInstalled": "Aucun addon installé",
+      "noInstalledDesc": "Explorez le Store pour ajouter de nouvelles fonctionnalités.",
+      "securityTitle": "Installer l'addon",
+      "verified": "Vérifié",
+      "securitySubtitle": "Examen de la sécurité et des autorisations",
+      "thirdPartyWarningTitle": "Avertissement : Addon tiers",
+      "thirdPartyWarningDesc": "N'installez que des addons provenant d'auteurs de confiance.",
+      "requestedPermissions": "Autorisations demandées :",
+      "noPermissionsRequired": "Cet addon ne requiert aucune autorisation spéciale.",
+      "allowAndInstall": "Autoriser & Installer",
+      "installing": "Installation...",
+      "tabs": {
+        "store": "Boutique",
+        "installed": "Installés"
+      },
+      "categories": {
+        "all": "Tous",
+        "utility": "Utilitaires",
+        "integration": "Intégrations",
+        "customization": "Personnalisation",
+        "performance": "Performances"
+      },
+      "permissions": {
+        "gameLifecycle": {
+          "label": "Gestion du cycle de jeu",
+          "desc": "Peut configurer les arguments JVM et surveiller les processus"
+        },
+        "gameLaunch": {
+          "label": "Contrôle du lancement",
+          "desc": "Peut déclencher le lancement du jeu"
+        },
+        "gameProfiles": {
+          "label": "Informations du compte",
+          "desc": "Accès au nom de profil et à la version sélectionnée"
+        },
+        "networkFetch": {
+          "label": "Accès réseau (Internet)",
+          "desc": "Peut contacter des serveurs et APIs externes"
+        },
+        "storageLocal": {
+          "label": "Stockage local",
+          "desc": "Enregistrer les paramètres sur le disque"
+        },
+        "uiSlots": {
+          "label": "Interface & Widgets",
+          "desc": "Intégrer des boutons et panneaux personnalisés"
+        },
+        "uiNotifications": {
+          "label": "Notifications",
+          "desc": "Afficher des notifications système"
+        },
+        "fsInstances": {
+          "label": "Fichiers d'instances",
+          "desc": "Lire et écrire directement dans les dossiers du jeu"
+        }
+      }
+    },
+    "crash": {
+      "detected": "Problème de lancement détecté",
+      "actionSuccess": "Action appliquée : {{message}}",
+      "actionFailed": "Échec de l'application de l'action",
+      "diagnostics": "Diagnostics intelligents",
+      "quickFixes": "Solutions rapides :"
+    },
+    "playtime": {
+      "title": "Temps de jeu",
+      "total": "Temps total : {{time}}"
+    }
+  }
+}
+

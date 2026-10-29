@@ -1,0 +1,224 @@
+{
+  "translation": {
+    "app": {
+      "title": "Obsyra Launcher",
+      "skinNotFound": "スキンが見つかりません"
+    },
+    "updater": {
+      "downloading": "アップデート {{version}} をダウンロード中...",
+      "downloadingProgress": "アップデート {{version}} をダウンロード中: {{progress}}%",
+      "downloaded": "アップデートが完了しました！再起動します..."
+    },
+    "console": {
+      "title": "コンソールログ",
+      "empty": "まだログはありません..."
+    },
+    "profile": {
+      "selectProfile": "プロファイルを選択",
+      "selectAccount": "アカウントを選択",
+      "noProfiles": "プロファイルがありません",
+      "microsoft": "公式ライセンス",
+      "offline": "オフライン",
+      "addOfflineProfile": "オフラインプロファイルを追加",
+      "addMicrosoftProfile": "Microsoft アカウントを追加",
+      "microsoftLoginInstructions": "以下の手順に従ってログインしてください:",
+      "microsoftLoginCode": "コード:",
+      "microsoftLoginLink": "ログインページを開く",
+      "microsoftLoginWaiting": "認証を待機しています...",
+      "microsoftLoginError": "認証に失敗しました",
+      "username": "ユーザー名",
+      "enterNickname": "プレイヤー名を入力",
+      "add": "追加",
+      "addProfileTitle": "プロファイルを追加",
+      "deleteTooltip": "プロファイルを削除"
+    },
+    "version": {
+      "selectVersion": "バージョンを選択",
+      "noVersions": "利用可能なバージョンがありません",
+      "openFolder": "インスタンスフォルダを開く",
+      "deleteInstance": "インスタンスを削除",
+      "confirmDelete": "このインスタンスを削除してもよろしいですか？この操作は元に戻せません。",
+      "delete": "削除",
+      "searchPlaceholder": "バージョンを検索...",
+      "noVersionsFound": "バージョンが見つかりませんでした",
+      "installed": "インストール済みインスタンス",
+      "releases": "公式リリース",
+      "snapshots": "スナップショット他",
+      "createInstance": "インスタンスを作成",
+      "createInstanceTitle": "新しいインスタンスを作成",
+      "createInstanceDesc": "Minecraft バージョンと Mod ローダーを選択してください。",
+      "instanceName": "インスタンス名",
+      "instanceNamePlaceholder": "例: Fabric 1.21.4",
+      "minecraftVersion": "Minecraft バージョン",
+      "loader": "Mod ローダー",
+      "loaderFabric": "Fabric (推奨)",
+      "loaderNeoForge": "NeoForge (最新 Forge)",
+      "loaderForge": "Forge (クラシック)",
+      "loaderQuilt": "Quilt",
+      "loaderVanilla": "Vanilla (標準バニラ)",
+      "create": "作成"
+    },
+    "launch": {
+      "play": "プレイ",
+      "download": "ダウンロード",
+      "starting": "準備中...",
+      "downloading_java": "Java をダウンロード中...",
+      "extracting_java": "Java を展開中...",
+      "downloading_libraries": "ライブラリをダウンロード中...",
+      "downloading_assets": "アセットをダウンロード中...",
+      "checking_assets": "アセットを確認中...",
+      "checking_natives": "ネイティブライブラリを確認中...",
+      "checking_libraries": "ライブラリを確認中...",
+      "extracting_natives": "ネイティブライブラリを展開中...",
+      "installing_version": "バージョンファイルを構成中...",
+      "installing_assets": "アセットを配置中...",
+      "installing_libraries": "ライブラリを構成中...",
+      "launching": "Minecraft を起動中...",
+      "success": "起動完了！",
+      "running": "ゲームが実行中です"
+    },
+    "settings": {
+      "title": "設定",
+      "game": "ゲーム",
+      "window": "ウィンドウ",
+      "versions": "バージョン一覧",
+      "memory": "メモリ割り当て (MB)",
+      "autoMemory": "メモリを自動検出",
+      "jvmArgs": "JVM 起動引数",
+      "applyAikar": "Aikar's Flags (G1GC 最適化) を適用",
+      "aikarHint": "Aikar's Flags はガベージコレクションを最適化し、ゲームのラグを低減します。",
+      "javaPath": "Java パス",
+      "closeAfterLaunch": "起動後にランチャーを閉じる",
+      "width": "幅",
+      "height": "高さ",
+      "fullscreen": "全画面表示",
+      "showReleases": "リリース版を表示",
+      "showSnapshots": "スナップショットを表示",
+      "showOld": "過去のバージョンを表示 (Alpha/Beta)",
+      "startupTime": "起動時間: {{ms}} ms"
+    },
+    "onboarding": {
+      "welcome": "Obsyra Launcher へようこそ",
+      "description": "洗練されたアニメーションとネイティブパフォーマンスで Minecraft を楽しもう。",
+      "getStarted": "始める",
+      "profilesTitle": "アカウントを設定",
+      "profilesDesc": "Microsoft アカウントを追加するか、オフラインでプレイします。",
+      "continue": "次へ",
+      "readyTitle": "準備完了！",
+      "readyDesc": "すべての設定が完了しました。冒険を始めましょう！",
+      "finish": "ゲーム起動"
+    },
+    "common": {
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "save": "保存",
+      "author": "作成者",
+      "version": "バージョン"
+    },
+    "addons": {
+      "title": "アドオン",
+      "subtitle": "ランチャーをカスタマイズする拡張モジュール",
+      "search": "アドオンを検索...",
+      "notFound": "アドオンが見つかりません",
+      "install": "インストール",
+      "installed": "インストール済み",
+      "reinstall": "再インストール / 更新",
+      "installZip": ".zip からインストール",
+      "installZipBtn": "ファイルから",
+      "installUrl": "URL からインストール",
+      "installUrlBtn": "URL から",
+      "urlDialogTitle": "URL からアドオンをインストール",
+      "urlDialogDesc": "アドオンの .zip アーカイブへの直接リンクを入力してください:",
+      "urlInputPlaceholder": "https://example.com/addon.zip",
+      "downloadingFromUrl": "アーカイブをダウンロード中...",
+      "downloadError": "アドオンのダウンロードに失敗しました",
+      "refreshCatalog": "カタログを更新",
+      "catalogRefreshed": "カタログを更新しました",
+      "uninstall": "アドオンをアンインストール",
+      "settings": "アドオン設定",
+      "settingsTitle": "設定:",
+      "update": "更新",
+      "updateAvailable": "更新が利用可能",
+      "verifiedAuthor": "公式認定開発者",
+      "thirdPartyAuthor": "サードパーティ製アドオン",
+      "trustLevels": {
+        "official": "Obsyra 公式アドオン",
+        "community": "コミュニティ認定アドオン",
+        "custom": "未検証のサードパーティ製"
+      },
+      "trustBadge": {
+        "official": "公式認定",
+        "community": "コミュニティ",
+        "custom": "カスタム"
+      },
+      "noInstalled": "インストールされたアドオンはありません",
+      "noInstalledDesc": "ストアタブから新しい機能を追加してみましょう。",
+      "securityTitle": "アドオンのインストール",
+      "verified": "検証済み",
+      "securitySubtitle": "セキュリティと権限の確認",
+      "thirdPartyWarningTitle": "警告: サードパーティ製アドオン",
+      "thirdPartyWarningDesc": "信頼できる作成者のアドオンのみをインストールしてください。",
+      "requestedPermissions": "要求される権限:",
+      "noPermissionsRequired": "このアドオンは特別な権限を必要としません。",
+      "allowAndInstall": "許可してインストール",
+      "installing": "インストール中...",
+      "tabs": {
+        "store": "ストア",
+        "installed": "インストール済み"
+      },
+      "categories": {
+        "all": "すべて",
+        "utility": "ユーティリティ",
+        "integration": "連携機能",
+        "customization": "外観・デザイン",
+        "performance": "パフォーマンス"
+      },
+      "permissions": {
+        "gameLifecycle": {
+          "label": "ゲームライフサイクル管理",
+          "desc": "JVM 引数の構成とプロセス監視が可能です"
+        },
+        "gameLaunch": {
+          "label": "ゲーム起動制御",
+          "desc": "Minecraft ゲームプロセスの起動を実行できます"
+        },
+        "gameProfiles": {
+          "label": "アカウント情報へのアクセス",
+          "desc": "現在のプロファイル名とバージョン情報を取得します"
+        },
+        "networkFetch": {
+          "label": "ネットワーク通信 (Internet)",
+          "desc": "外部 API やサーバーへの通信を許可します"
+        },
+        "storageLocal": {
+          "label": "ローカルストレージ",
+          "desc": "設定データをディスクに安全に保存します"
+        },
+        "uiSlots": {
+          "label": "UI & ウィジェット拡張",
+          "desc": "ランチャー内にカスタムボタンやパーツを配置できます"
+        },
+        "uiNotifications": {
+          "label": "通知",
+          "desc": "システム通知メッセージを表示します"
+        },
+        "fsInstances": {
+          "label": "インスタンスフォルダへのアクセス",
+          "desc": "インスタンス内のファイルを直接読み書きします"
+        }
+      }
+    },
+    "crash": {
+      "detected": "起動エラーを検出しました",
+      "actionSuccess": "修正を適用しました: {{message}}",
+      "actionFailed": "修正の適用に失敗しました",
+      "diagnostics": "スマート診断",
+      "quickFixes": "クイック修正:"
+    },
+    "playtime": {
+      "title": "プレイ時間",
+      "total": "総プレイ時間: {{time}}"
+    }
+  }
+}
+

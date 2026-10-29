@@ -24,7 +24,7 @@ export function getDiscordConfig(): DiscordConfig {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_CONFIG;
-    return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+    return { ...DEFAULT_CONFIG, ...JSON.parse(raw), enabled: true };
   } catch {
     return DEFAULT_CONFIG;
   }

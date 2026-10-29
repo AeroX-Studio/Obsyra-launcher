@@ -154,7 +154,7 @@ export const ConfigFieldRow: React.FC<ConfigFieldRowProps> = ({
           size="icon"
           onClick={resetToDefault}
           className="text-muted-foreground hover:text-foreground h-5 w-5"
-          title="Сбросить по умолчанию"
+          title="Reset to default"
         >
           <RotateCcw className="h-2.5 w-2.5" />
         </Button>

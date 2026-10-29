@@ -48,6 +48,45 @@ pub fn calculate_sha256(bytes: &[u8]) -> String {
 }
 
 static EMBEDDED_CATALOG_JSON: &str = include_str!("../../addons/catalog.json");
+static EMBEDDED_SKIN_3D_VIEWER_ZIP: &[u8] = include_bytes!("../../addons/dist/skin-3d-viewer.zip");
+static EMBEDDED_MODRINTH_BROWSER_ZIP: &[u8] = include_bytes!("../../addons/dist/modrinth-browser.zip");
+
+pub fn get_embedded_or_local_addon_bytes(identifier: &str) -> Option<Vec<u8>> {
+    let lower = identifier.to_lowercase();
+    if lower.contains("skin-3d-viewer") {
+        return Some(EMBEDDED_SKIN_3D_VIEWER_ZIP.to_vec());
+    }
+    if lower.contains("modrinth-browser") {
+        return Some(EMBEDDED_MODRINTH_BROWSER_ZIP.to_vec());
+    }
+
+    if let Some(filename) = identifier.split('/').last() {
+        let zip_name = if filename.ends_with(".zip") {
+            filename.to_string()
+        } else {
+            format!("{}.zip", filename)
+        };
+
+        if let Ok(cwd) = std::env::current_dir() {
+            let candidates = [
+                cwd.join("addons").join("dist").join(&zip_name),
+                cwd.join(&zip_name),
+                cwd.parent()
+                    .map(|p| p.join("addons").join("dist").join(&zip_name))
+                    .unwrap_or_default(),
+            ];
+            for c in candidates {
+                if c.exists() {
+                    if let Ok(bytes) = fs::read(&c) {
+                        return Some(bytes);
+                    }
+                }
+            }
+        }
+    }
+
+    None
+}
 
 pub fn is_verified_addon(id: &str, checksum: Option<&str>) -> bool {
     if let Some(target_checksum) = checksum {
@@ -403,54 +442,42 @@ pub fn install_addon_from_archive_bytes(
 
 #[tauri::command]
 pub async fn download_addon_archive_bytes(download_url: String) -> Result<Vec<u8>, String> {
-    #[cfg(debug_assertions)]
-    {
-        if let Some(filename) = download_url.split('/').last() {
-            if filename.ends_with(".zip") {
-                if let Ok(cwd) = std::env::current_dir() {
-                    let candidates = [
-                        cwd.join("addons").join("dist").join(filename),
-                        cwd.parent()
-                            .map(|p| p.join("addons").join("dist").join(filename))
-                            .unwrap_or_default(),
-                    ];
-                    for c in candidates {
-                        if c.exists() {
-                            if let Ok(bytes) = fs::read(&c) {
-                                return Ok(bytes);
-                            }
-                        }
-                    }
+    let filename = download_url.split('/').last().unwrap_or_default();
+
+    // Check embedded or local file first if this is an official addon
+    if let Some(bytes) = get_embedded_or_local_addon_bytes(&download_url) {
+        return Ok(bytes);
+    }
+    if let Some(bytes) = get_embedded_or_local_addon_bytes(filename) {
+        return Ok(bytes);
+    }
+
+    // Try downloading from the remote URL with a reasonable timeout
+    let client_res = reqwest::Client::builder()
+        .user_agent("Obsyra-Launcher/AddonDownloader")
+        .timeout(std::time::Duration::from_secs(8))
+        .build();
+
+    if let Ok(client) = client_res {
+        if let Ok(response) = client.get(&download_url).send().await {
+            if response.status().is_success() {
+                if let Ok(bytes) = response.bytes().await {
+                    return Ok(bytes.to_vec());
                 }
             }
         }
     }
 
-    let client = reqwest::Client::builder()
-        .user_agent("Obsyra-Launcher/AddonDownloader")
-        .build()
-        .map_err(|e| format!("Failed to build HTTP client: {}", e))?;
-
-    let response = client
-        .get(&download_url)
-        .send()
-        .await
-        .map_err(|e| format!("Failed to download addon from '{}': {}", download_url, e))?;
-
-    if !response.status().is_success() {
-        return Err(format!(
-            "Failed to download addon: HTTP status {}",
-            response.status()
-        ));
+    // Secondary fallback in case identifier matching was subtle
+    let addon_id = filename.trim_end_matches(".zip");
+    if let Some(bytes) = get_embedded_or_local_addon_bytes(addon_id) {
+        return Ok(bytes);
     }
 
-    let bytes = response
-        .bytes()
-        .await
-        .map_err(|e| format!("Failed to read response bytes: {}", e))?
-        .to_vec();
-
-    Ok(bytes)
+    Err(format!(
+        "Failed to download addon from '{}' and no local package was found",
+        download_url
+    ))
 }
 
 #[tauri::command]
@@ -460,29 +487,20 @@ pub async fn download_and_install_addon(
     expected_checksum: Option<String>,
 ) -> Result<AddonDiskInfo, String> {
     crate::validate_safe_id(&addon_id)?;
-    let client = reqwest::Client::builder()
-        .user_agent("Obsyra-Launcher/AddonInstaller")
-        .build()
-        .map_err(|e| format!("Failed to build HTTP client: {}", e))?;
 
-    let response = client
-        .get(&download_url)
-        .send()
-        .await
-        .map_err(|e| format!("Failed to download addon from '{}': {}", download_url, e))?;
-
-    if !response.status().is_success() {
-        return Err(format!(
-            "Failed to download addon: HTTP status {}",
-            response.status()
-        ));
-    }
-
-    let bytes = response
-        .bytes()
-        .await
-        .map_err(|e| format!("Failed to read response bytes: {}", e))?
-        .to_vec();
+    let bytes = match download_addon_archive_bytes(download_url.clone()).await {
+        Ok(b) => b,
+        Err(_) => {
+            if let Some(b) = get_embedded_or_local_addon_bytes(&addon_id) {
+                b
+            } else {
+                return Err(format!(
+                    "Failed to download or locate addon package '{}' from '{}'",
+                    addon_id, download_url
+                ));
+            }
+        }
+    };
 
     // Check if zip archive (magic bytes PK)
     if bytes.len() >= 4 && &bytes[0..2] == b"PK" {

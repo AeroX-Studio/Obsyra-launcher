@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLauncherStore, type Language } from "@/state";
 import { AnimatePresence, m, type Variants } from "framer-motion";
 import {
@@ -11,6 +18,18 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { playStartupSound } from "@/lib/audio";
 import { ProfileSelector } from "./ProfileSelector";
+
+const ONBOARDING_LANGUAGES: { value: Language; label: string; flag: string }[] = [
+  { value: "ENGLISH", label: "English", flag: "🇬🇧" },
+  { value: "RUSSIAN", label: "Русский", flag: "🇷🇺" },
+  { value: "GERMAN", label: "Deutsch", flag: "🇩🇪" },
+  { value: "FRENCH", label: "Français", flag: "🇫🇷" },
+  { value: "SPANISH", label: "Español", flag: "🇪🇸" },
+  { value: "PORTUGUESE", label: "Português", flag: "🇧🇷" },
+  { value: "UKRAINIAN", label: "Українська", flag: "🇺🇦" },
+  { value: "CHINESE", label: "简体中文", flag: "🇨🇳" },
+  { value: "JAPANESE", label: "日本語", flag: "🇯🇵" },
+];
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -55,11 +74,11 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             exit="exit"
             className="border-border/50 bg-card flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-2xl border p-10 text-center shadow-2xl"
           >
-            <div className="bg-primary/10 flex h-24 w-24 items-center justify-center rounded-2xl p-2 shadow-inner border border-primary/20 backdrop-blur-sm">
+            <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-black p-2 shadow-xl ring-1 ring-white/15 transition-transform hover:scale-105">
               <img
                 src="/obsyra-logo.png"
                 alt="Obsyra Launcher"
-                className="h-16 w-16 object-contain drop-shadow-md transition-transform hover:scale-105"
+                className="h-20 w-20 object-contain drop-shadow-md"
               />
             </div>
             <div>
@@ -75,36 +94,38 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             <div className="border-border/50 bg-background/50 flex w-full flex-col gap-2.5 rounded-xl border p-3.5 shadow-sm">
               <div className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs font-medium">
                 <Globe className="text-primary h-3.5 w-3.5" />
-                <span>
-                  {state?.language === "RUSSIAN"
-                    ? "Выберите язык / Select language"
-                    : "Select language / Выберите язык"}
-                </span>
+                <span>Select Language</span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  type="button"
-                  variant={
-                    state?.language === "RUSSIAN" ? "default" : "outline"
-                  }
-                  className="h-9 cursor-pointer gap-2 text-xs font-medium transition-colors"
-                  onClick={() => handleLanguageChange("RUSSIAN")}
-                >
-                  <span className="text-sm">🇷🇺</span>
-                  <span>Русский</span>
-                </Button>
-                <Button
-                  type="button"
-                  variant={
-                    state?.language === "ENGLISH" ? "default" : "outline"
-                  }
-                  className="h-9 cursor-pointer gap-2 text-xs font-medium transition-colors"
-                  onClick={() => handleLanguageChange("ENGLISH")}
-                >
-                  <span className="text-sm">🇬🇧</span>
-                  <span>English</span>
-                </Button>
-              </div>
+              <Select
+                value={state?.language || "ENGLISH"}
+                onValueChange={(val) => val && handleLanguageChange(val as Language)}
+              >
+                <SelectTrigger className="w-full h-10 border-border/50 bg-card/60 backdrop-blur-sm">
+                  <SelectValue>
+                    {() => {
+                      const sel = ONBOARDING_LANGUAGES.find(
+                        (l) => l.value === state?.language
+                      ) || ONBOARDING_LANGUAGES[0];
+                      return (
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{sel.flag}</span>
+                          <span className="text-sm font-medium">{sel.label}</span>
+                        </div>
+                      );
+                    }}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="max-h-[260px]">
+                  {ONBOARDING_LANGUAGES.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{item.flag}</span>
+                        <span className="text-sm">{item.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <Button
