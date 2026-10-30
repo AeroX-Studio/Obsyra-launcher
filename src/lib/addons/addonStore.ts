@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { fetchRemoteCatalog, getCachedCatalog } from "./catalog";
 import { addonRegistry } from "./registry";
 import { loadAddonFromDisk, removeAddonStyle } from "./loader";
@@ -121,6 +121,10 @@ export const useAddonStore = create<AddonStateStore>((set, get) => ({
 
   initAddons: async () => {
     if (get().isInitialized) return;
+    if (!isTauri()) {
+      set({ isInitialized: true, isLoading: false });
+      return;
+    }
 
     const stored = loadStoredConfig();
     const storedMap = new Map(stored.map((s) => [s.id, s]));

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { type Profile, useLauncherStore } from "@/state";
 
 export interface MsaDeviceCode {
@@ -18,6 +18,10 @@ export function useMsaAuth(onSuccess?: (profile: Profile) => void) {
 
   const startAuth = async () => {
     try {
+      if (!isTauri()) {
+        setError("Microsoft MSA login requires running in Obsyra Desktop App");
+        return;
+      }
       setError("");
       setMsaData(null);
       const data = await invoke<MsaDeviceCode>("start_msa_auth");

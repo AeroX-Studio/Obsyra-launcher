@@ -42,17 +42,17 @@ export const Header = () => {
   return (
     <header
       data-tauri-drag-region
-      className="border-border/50 bg-card/60 flex w-full cursor-default items-center justify-between border-b px-4 py-3 backdrop-blur-md select-none transition-colors"
+      className="relative z-20 flex w-full cursor-default items-center justify-between border-b border-white/10 bg-black/60 px-4 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.5)] backdrop-blur-2xl select-none transition-colors"
     >
       <div
         className="pointer-events-none ml-2 flex items-center gap-3"
         data-tauri-drag-region
       >
-        <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-xl bg-black/80 ring-1 ring-white/15 shadow-md transition-all duration-300 hover:scale-105 hover:ring-purple-500/40">
+        <div className="relative flex h-8.5 w-8.5 items-center justify-center overflow-hidden rounded-xl bg-black ring-1 ring-white/20 shadow-md transition-all duration-300 hover:scale-105 hover:ring-white/50">
           <img
             src="/obsyra-logo.png"
             alt="Obsyra Launcher Logo"
-            className="h-full w-full rounded-xl object-contain drop-shadow"
+            className="h-full w-full rounded-xl object-contain p-0.5"
           />
         </div>
         <h1
@@ -70,7 +70,7 @@ export const Header = () => {
           <SettingsDialog />
 
           <Select value={state.language} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="w-[145px] h-9 border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-accent/40">
+            <SelectTrigger className="h-9 w-[145px] rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-md shadow-sm transition-all hover:border-white/20 hover:bg-white/[0.10]">
               <SelectValue>
                 {() => (
                   <div className="flex items-center gap-2 truncate">

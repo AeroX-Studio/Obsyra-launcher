@@ -1,5 +1,6 @@
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { isTauri } from "@tauri-apps/api/core";
 import { useState, useEffect } from "react";
 
 export type UpdateState =
@@ -61,6 +62,11 @@ class AutoUpdaterService {
 
   public async checkForUpdates(isManual = false) {
     if (this.state === "checking" || this.isDownloading) return;
+    if (!isTauri()) {
+      this.state = "idle";
+      this.emit();
+      return;
+    }
 
     this.state = "checking";
     this.errorMessage = null;
@@ -164,6 +170,10 @@ class AutoUpdaterService {
   }
 
   public async installAndRelaunch() {
+    if (!isTauri()) {
+      window.location.reload();
+      return;
+    }
     try {
       await relaunch();
     } catch (err) {

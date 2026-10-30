@@ -3,7 +3,7 @@
   "private": true,
   "description": "Obsyra Launcher - A modern cross-platform Minecraft launcher by Obsyra Studio by AeroX",
   "author": "Obsyra Studio by AeroX <contact@aerox.dev>",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

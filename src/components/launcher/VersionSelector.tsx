@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { AnimatePresence } from "framer-motion";
 import { ChevronsUpDown, Clock, Cloud, HardDrive } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -39,6 +39,13 @@ export const VersionSelector = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   useEffect(() => {
+    if (!isTauri()) {
+      setPlaytimes({
+        "1.21.4": "3h 25m",
+        "1.20.4": "12h 40m",
+      });
+      return;
+    }
     invoke<PlaytimeSummary>("get_playtime_summary")
       .then((res) => {
         if (res && res.formattedVersions) {
@@ -102,7 +109,7 @@ export const VersionSelector = () => {
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="hover:border-primary/50 focus:ring-primary/20 w-full min-w-0 flex-1 justify-between font-normal transition-colors duration-300"
+                className="w-full min-w-0 flex-1 justify-between font-normal rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-all hover:bg-white/[0.08] hover:border-white/20 h-10 shadow-sm"
               />
             }
           >

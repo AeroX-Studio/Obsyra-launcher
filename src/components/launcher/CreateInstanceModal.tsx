@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { Loader2, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { m } from "framer-motion";
@@ -50,6 +50,21 @@ export const CreateInstanceModal: React.FC<CreateInstanceModalProps> = ({
 
     setIsCreating(true);
     try {
+      if (!isTauri()) {
+        const id = trimmed.toLowerCase().replace(/[^a-z0-9-_.]/g, "-");
+        const newVer = {
+          id,
+          type: selectedLoader,
+          isLocal: true,
+          releaseTime: new Date().toISOString(),
+        };
+        const currentVersions = useLauncherStore.getState().versions;
+        useLauncherStore.setState({ versions: [newVer, ...currentVersions] });
+        await selectVersion(id);
+        onOpenChange(false);
+        setIsCreating(false);
+        return;
+      }
       const createdId = await invoke<string>("create_instance", {
         id: trimmed.toLowerCase().replace(/[^a-z0-9-_.]/g, "-"),
         baseVersion: selectedBaseVersion,

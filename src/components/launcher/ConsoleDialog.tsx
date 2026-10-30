@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { globalLogs, subscribeLogs, type LogEntry } from "@/lib/logger";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
 interface CrashAction {
@@ -66,6 +66,7 @@ export const ConsoleDialog = () => {
   }, []);
 
   useEffect(() => {
+    if (!isTauri()) return;
     invoke<CrashDiag | null>("get_last_crash_diagnostics")
       .then((res) => {
         if (res && res.hasCrashed) {
@@ -94,6 +95,10 @@ export const ConsoleDialog = () => {
 
   const handleApplyAction = async (action: CrashAction) => {
     try {
+      if (!isTauri()) {
+        setActionFeedback("Action simulated successfully in web preview mode");
+        return;
+      }
       setIsApplying(true);
       const res = await invoke<string>("apply_crash_action", {
         kind: action.kind,
@@ -113,7 +118,11 @@ export const ConsoleDialog = () => {
     <Dialog>
       <DialogTrigger
         render={
-          <Button variant="ghost" size="icon" className="relative h-9 w-9" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-9 w-9 rounded-xl border border-white/10 bg-white/[0.05] text-muted-foreground backdrop-blur-md shadow-sm transition-all hover:border-white/20 hover:bg-white/[0.12] hover:text-foreground"
+          />
         }
       >
         <Terminal className="h-4 w-4" />
@@ -124,7 +133,7 @@ export const ConsoleDialog = () => {
           </span>
         )}
       </DialogTrigger>
-      <DialogContent className="border-border bg-background max-w-4xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <div className="flex items-center justify-between pr-4">
             <DialogTitle className="flex items-center gap-2">

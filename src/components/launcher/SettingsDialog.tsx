@@ -16,24 +16,36 @@ import { useLauncherStore } from "@/state";
 import { getVersion } from "@tauri-apps/api/app";
 import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { useDiscordRpc } from "@/lib/discord";
 import { useAutoUpdater } from "@/lib/updater";
 
 export const SettingsDialog = () => {
-  const { state, updateState, fetchVersions, startupTimeMs, appMemoryMb } =
+  const { state, updateState, versions, profiles, fetchVersions, startupTimeMs, appMemoryMb } =
     useLauncherStore();
   const { t } = useTranslation();
-  const [appVersion, setAppVersion] = useState<string>("1.0.1");
+  const [appVersion, setAppVersion] = useState<string>("1.0.0");
   const [totalPlaytime, setTotalPlaytime] = useState<string | null>(null);
 
   const discord = useDiscordRpc();
   const updater = useAutoUpdater();
 
+  const selectedVersion =
+    versions.find((v) => v.id === state?.selectedVersionId)?.id ||
+    state?.selectedVersionId ||
+    "1.21.4";
+  const selectedProfile =
+    profiles.find((p) => p.id === state?.selectedProfileId)?.username ||
+    "Player";
+
   useEffect(() => {
+    if (!isTauri()) {
+      setTotalPlaytime("16h 05m");
+      return;
+    }
     getVersion()
       .then((ver) => setAppVersion(ver))
-      .catch(() => { });
+      .catch(() => {});
 
     invoke<{ formattedTotal: string; totalSeconds: number }>(
       "get_playtime_summary",
@@ -43,7 +55,7 @@ export const SettingsDialog = () => {
           setTotalPlaytime(res.formattedTotal);
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   if (!state) return null;
@@ -55,18 +67,18 @@ export const SettingsDialog = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground"
+            className="rounded-xl border border-white/10 bg-white/[0.05] text-muted-foreground backdrop-blur-md shadow-sm transition-all hover:border-white/20 hover:bg-white/[0.12] hover:text-foreground"
           />
         }
       >
         <Settings className="h-5 w-5" />
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[560px]">
+      <DialogContent className="sm:max-w-[620px]">
         <DialogHeader>
           <DialogTitle>{t("settings.title")}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="game" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-5 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md">
             <TabsTrigger value="game">{t("settings.game")}</TabsTrigger>
             <TabsTrigger value="window">{t("settings.window")}</TabsTrigger>
             <TabsTrigger value="versions">{t("settings.versions")}</TabsTrigger>
@@ -278,106 +290,144 @@ export const SettingsDialog = () => {
           </TabsContent>
 
           {/* Built-in Discord Rich Presence Settings */}
-          <TabsContent value="discord" className="flex flex-col gap-4 py-4">
-            <div className="bg-card/50 border-border/40 flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${discord.config.enabled && discord.status === "connected"
-                      ? "bg-[#5865F2]/20 text-[#5865F2]"
-                      : "bg-muted text-muted-foreground"
+          <TabsContent value="discord" className="flex flex-col gap-4 py-3">
+            {/* Master Toggle Glass Card */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-lg backdrop-blur-xl transition-all">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
+                      discord.config.enabled && discord.status === "connected"
+                        ? "bg-[#5865F2]/25 text-[#5865F2] ring-1 ring-[#5865F2]/40 shadow-[0_0_15px_rgba(88,101,242,0.3)]"
+                        : "bg-white/[0.06] text-muted-foreground ring-1 ring-white/10"
                     }`}
-                >
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold">Discord Rich Presence</div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <span
-                      className={`h-2 w-2 rounded-full ${discord.config.enabled && discord.status === "connected"
-                          ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"
-                          : discord.config.enabled && discord.status === "connecting"
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold tracking-tight">Discord Rich Presence</span>
+                      {discord.config.enabled && discord.status === "connected" && (
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-400 ring-1 ring-emerald-500/30">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                      <span
+                        className={`h-2 w-2 rounded-full ${
+                          discord.config.enabled && discord.status === "connected"
+                            ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"
+                            : discord.config.enabled && discord.status === "connecting"
                             ? "bg-amber-400 animate-pulse"
                             : "bg-muted-foreground/40"
                         }`}
-                    />
-                    <span>
-                      {discord.config.enabled
-                        ? discord.status === "connected"
-                          ? "Connected to Discord Client"
-                          : discord.status === "connecting"
+                      />
+                      <span>
+                        {discord.config.enabled
+                          ? discord.status === "connected"
+                            ? "Connected to Discord Client"
+                            : discord.status === "connecting"
                             ? "Connecting to local Discord client..."
                             : "Discord desktop client not running"
-                        : "Disabled"}
-                    </span>
+                          : "Disabled"}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <Switch
+                  checked={discord.config.enabled}
+                  onCheckedChange={(checked) =>
+                    discord.updateConfig({ ...discord.config, enabled: checked })
+                  }
+                />
               </div>
-              <Switch
-                checked={discord.config.enabled}
-                onCheckedChange={(checked) =>
-                  discord.updateConfig({ ...discord.config, enabled: checked })
-                }
-              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <Label className="flex flex-col items-start gap-1">
-                <span>Show Minecraft Version</span>
-                <span className="text-xs text-muted-foreground">
-                  Display current Minecraft version on Discord profile
+            {/* Live Discord Activity Preview Card */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#1e1f29]/80 p-4 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold tracking-wider text-[#b5bac1] uppercase">
+                  Activity Preview
                 </span>
-              </Label>
-              <Switch
-                disabled={!discord.config.enabled}
-                checked={discord.config.showVersion}
-                onCheckedChange={(checked) =>
-                  discord.updateConfig({ ...discord.config, showVersion: checked })
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label className="flex flex-col items-start gap-1">
-                <span>Show Profile Username</span>
-                <span className="text-xs text-muted-foreground">
-                  Display current player username on Discord profile
+                <span className="flex items-center gap-1 text-[10px] font-medium text-[#5865F2] bg-[#5865F2]/10 px-2 py-0.5 rounded-full ring-1 ring-[#5865F2]/20">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  Live Discord Profile
                 </span>
-              </Label>
-              <Switch
-                disabled={!discord.config.enabled}
-                checked={discord.config.showProfile}
-                onCheckedChange={(checked) =>
-                  discord.updateConfig({ ...discord.config, showProfile: checked })
-                }
-              />
+              </div>
+
+              <div className="flex items-start gap-3.5 rounded-xl border border-white/5 bg-black/45 p-3.5">
+                <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-xl bg-black/90 p-1 ring-1 ring-white/15 shadow-md">
+                  <img
+                    src="/obsyra-logo.png"
+                    alt="Obsyra Launcher"
+                    className="h-full w-full rounded-lg object-contain"
+                  />
+                  <span className="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-black" />
+                </div>
+
+                <div className="flex flex-col justify-center min-w-0 flex-1">
+                  <span className="font-semibold text-white text-sm truncate leading-tight">Obsyra Launcher</span>
+                  <span className="text-xs text-[#dbdee1] truncate mt-1 font-medium">
+                    {discord.config.showVersion ? `Playing Minecraft ${selectedVersion}` : "Playing Minecraft"}
+                  </span>
+                  <span className="text-xs text-[#949ba4] truncate mt-0.5">
+                    {discord.config.showProfile ? `In-Game as ${selectedProfile}` : "In Main Menu"}
+                  </span>
+                  <span className="flex items-center gap-1 text-[11px] text-[#949ba4] mt-1 font-mono">
+                    <Clock className="h-3 w-3" />
+                    00:42 elapsed
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>Custom Status Text</Label>
-              <Input
-                disabled={!discord.config.enabled}
-                value={discord.config.customDetails}
-                onChange={(e) =>
-                  discord.updateConfig({
-                    ...discord.config,
-                    customDetails: e.target.value,
-                  })
-                }
-                placeholder="Playing Obsyra Launcher"
-              />
+            {/* Privacy & Display Options (Glass Cards) */}
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3.5 transition-all hover:bg-white/[0.06] hover:border-white/15">
+                <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                  <span className="text-xs font-semibold text-foreground">Show Minecraft Version</span>
+                  <span className="text-[11px] text-muted-foreground font-normal">
+                    Display active instance version (e.g. {selectedVersion}) on your Discord profile
+                  </span>
+                </Label>
+                <Switch
+                  disabled={!discord.config.enabled}
+                  checked={discord.config.showVersion}
+                  onCheckedChange={(checked) =>
+                    discord.updateConfig({ ...discord.config, showVersion: checked })
+                  }
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3.5 transition-all hover:bg-white/[0.06] hover:border-white/15">
+                <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                  <span className="text-xs font-semibold text-foreground">Show Profile Username</span>
+                  <span className="text-[11px] text-muted-foreground font-normal">
+                    Display your in-game username ({selectedProfile}) in Discord activity details
+                  </span>
+                </Label>
+                <Switch
+                  disabled={!discord.config.enabled}
+                  checked={discord.config.showProfile}
+                  onCheckedChange={(checked) =>
+                    discord.updateConfig({ ...discord.config, showProfile: checked })
+                  }
+                />
+              </div>
             </div>
           </TabsContent>
 
           {/* About Tab with Branding & Updater */}
           <TabsContent value="about" className="flex flex-col gap-4 py-4">
             <div className="bg-card/40 border-border/40 flex items-center gap-4 rounded-xl border p-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black/80 p-1.5 shadow-md ring-1 ring-white/15">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-black/80 p-2 shadow-md ring-1 ring-white/20">
                 <img
                   src="/obsyra-logo.png"
                   alt="Obsyra Launcher"
-                  className="h-full w-full rounded-xl object-contain drop-shadow"
+                  className="h-full w-full rounded-xl object-contain"
                 />
               </div>
               <div className="flex flex-col">
@@ -401,14 +451,14 @@ export const SettingsDialog = () => {
                     {updater.state === "checking"
                       ? "Checking for new releases..."
                       : updater.state === "downloading"
-                        ? `Downloading v${updater.availableVersion} (${updater.progress}%)`
-                        : updater.state === "ready"
-                          ? `Update ready to install: v${updater.availableVersion}`
-                          : updater.state === "up-to-date"
-                            ? "You are on the latest official version."
-                            : updater.state === "error"
-                              ? (updater.errorMessage || "Unable to check updates")
-                              : "Automatic background updates are active."}
+                      ? `Downloading v${updater.availableVersion} (${updater.progress}%)`
+                      : updater.state === "ready"
+                      ? `Update ready to install: v${updater.availableVersion}`
+                      : updater.state === "up-to-date"
+                      ? "You are on the latest official version."
+                      : updater.state === "error"
+                      ? (updater.errorMessage || "Unable to check updates")
+                      : "Automatic background updates are active."}
                   </div>
                 </div>
 

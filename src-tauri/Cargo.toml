@@ -1,6 +1,6 @@
 [package]
 name = "obsyra-launcher"
-version = "1.0.1"
+version = "1.0.0"
 description = "Obsyra Launcher - A modern cross-platform Minecraft launcher by Obsyra Studio by AeroX"
 authors = ["Obsyra Studio by AeroX <contact@aerox.dev>"]
 edition = "2021"
