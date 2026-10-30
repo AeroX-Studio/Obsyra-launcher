@@ -48,11 +48,19 @@ export const Header = () => {
         className="pointer-events-none ml-2 flex items-center gap-3"
         data-tauri-drag-region
       >
+<<<<<<< HEAD
         <div className="relative flex h-8.5 w-8.5 items-center justify-center overflow-hidden rounded-xl bg-black ring-1 ring-white/20 shadow-md transition-all duration-300 hover:scale-105 hover:ring-white/50">
           <img
             src="/obsyra-logo.png"
             alt="Obsyra Launcher Logo"
             className="h-full w-full rounded-xl object-contain p-0.5"
+=======
+        <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-xl bg-black/80 ring-1 ring-white/15 shadow-md transition-all duration-300 hover:scale-105 hover:ring-purple-500/40">
+          <img
+            src="/obsyra-logo.png"
+            alt="Obsyra Launcher Logo"
+            className="h-full w-full rounded-xl object-contain drop-shadow"
+>>>>>>> 67baaec4492ac64546ba611939b01e1752334424
           />
         </div>
         <h1

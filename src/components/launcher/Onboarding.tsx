@@ -74,7 +74,11 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             exit="exit"
             className="flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-3xl border border-white/15 bg-black/90 p-10 backdrop-blur-3xl text-center shadow-2xl"
           >
+<<<<<<< HEAD
             <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-black/80 p-2.5 shadow-2xl ring-1 ring-white/20 transition-transform hover:scale-105">
+=======
+            <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-black/80 p-2 shadow-2xl ring-1 ring-white/15 transition-transform duration-300 hover:scale-105 hover:ring-purple-500/40">
+>>>>>>> 67baaec4492ac64546ba611939b01e1752334424
               <img
                 src="/obsyra-logo.png"
                 alt="Obsyra Launcher"
