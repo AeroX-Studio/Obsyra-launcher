@@ -22,6 +22,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMsaAuth } from "@/lib/useMsaAuth";
 import { useLauncherStore } from "@/state";
+import { isTauri } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { AnimatePresence, m } from "framer-motion";
 import {
@@ -81,7 +82,7 @@ export const ProfileSelector = () => {
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="hover:border-primary/50 focus:ring-primary/20 w-full min-w-0 flex-1 justify-between font-normal transition-colors duration-300"
+                className="w-full min-w-0 flex-1 justify-between font-normal rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-all hover:bg-white/[0.08] hover:border-white/20 h-10 shadow-sm"
               />
             }
           >
@@ -272,7 +273,7 @@ export const ProfileSelector = () => {
                           <Button
                             variant="outline"
                             className="hover:bg-accent mt-2 w-full transition-colors"
-                            onClick={() => openUrl(msaData.verification_uri)}
+                            onClick={() => (isTauri() ? openUrl(msaData.verification_uri) : window.open(msaData.verification_uri, "_blank"))}
                           >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             {t("profile.microsoftLoginLink")}

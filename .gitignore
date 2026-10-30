@@ -16,6 +16,7 @@ dist-ssr/
 build/
 target/
 src-tauri/target/
+.agents/
 
 # Environment and sensitive credential files
 .env

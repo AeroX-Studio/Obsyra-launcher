@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Play, Download } from "lucide-react";
 import { useEffect, useReducer } from "react";
@@ -92,6 +92,7 @@ export const LaunchButton = () => {
   const isDownloaded = selectedVersion?.isLocal ?? false;
 
   useEffect(() => {
+    if (!isTauri()) return;
     invoke<boolean>("is_game_running")
       .then((running) => {
         if (running) {
@@ -134,6 +135,30 @@ export const LaunchButton = () => {
       isRunning
     )
       return;
+
+    if (!isTauri()) {
+      dispatch({ type: "START_LAUNCH" });
+      setTimeout(() => {
+        dispatch({
+          type: "PROGRESS",
+          status: "downloading_libraries",
+          progress: 45,
+          detail: "Simulating launcher environment...",
+        });
+      }, 400);
+      setTimeout(() => {
+        dispatch({
+          type: "PROGRESS",
+          status: "launching",
+          progress: 90,
+          detail: "Starting simulated game client...",
+        });
+      }, 900);
+      setTimeout(() => {
+        dispatch({ type: "SUCCESS" });
+      }, 1400);
+      return;
+    }
 
     dispatch({ type: "START_LAUNCH" });
 
@@ -181,10 +206,12 @@ export const LaunchButton = () => {
       >
         <Button
           size="lg"
-          className={`h-14 w-full text-lg font-bold uppercase shadow-md transition-colors duration-300 ${
+          className={`relative h-14 w-full overflow-hidden text-lg font-black uppercase tracking-wider rounded-2xl transition-all duration-300 ${
             isRunning
-              ? "cursor-not-allowed border border-emerald-500/30 bg-emerald-600/20 text-emerald-400 opacity-90"
-              : "hover:bg-primary/90 hover:shadow-xl"
+              ? "cursor-not-allowed border border-white/30 bg-white/10 text-white backdrop-blur-2xl opacity-90 shadow-[0_0_25px_rgba(255,255,255,0.25)]"
+              : isLaunching
+              ? "border border-white/40 bg-white/20 text-white backdrop-blur-2xl shadow-[0_0_25px_rgba(255,255,255,0.25)]"
+              : "border border-white bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.4),0_10px_25px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,1)] hover:bg-white/95 hover:shadow-[0_0_45px_rgba(255,255,255,0.65)] hover:scale-[1.01]"
           }`}
           disabled={
             !state.selectedProfileId ||
@@ -194,6 +221,10 @@ export const LaunchButton = () => {
           }
           onClick={handleLaunch}
         >
+          {/* Subtle Glassmorphic Shine Overlay */}
+          {!isRunning && !isLaunching && (
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
+          )}
           <AnimatePresence mode="wait">
             {isRunning ? (
               <m.div
@@ -237,12 +268,12 @@ export const LaunchButton = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center"
+                className="flex items-center text-black font-black tracking-wider"
               >
                 {isDownloaded ? (
-                  <Play className="mr-2 h-5 w-5 fill-current" />
+                  <Play className="mr-2.5 h-5 w-5 fill-black text-black" />
                 ) : (
-                  <Download className="mr-2 h-5 w-5" />
+                  <Download className="mr-2.5 h-5 w-5 text-black" />
                 )}
                 {isDownloaded ? t("launch.play") : t("launch.download")}
               </m.div>

@@ -1,5 +1,5 @@
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import { useLauncherStore } from "@/state";
 
 export type DiscordStatus = "connected" | "connecting" | "disconnected" | "disabled";
@@ -65,7 +65,7 @@ class DiscordRpcManager {
     this.connect();
 
     // Listen to game progress lifecycle
-    listen("launch-progress", (event) => {
+    if (isTauri()) listen("launch-progress", (event) => {
       const payload = event.payload as { status: string };
       if (payload.status === "success") {
         this.isGameRunning = true;
@@ -82,7 +82,7 @@ class DiscordRpcManager {
     }).catch(() => {});
 
     // Check if game was already running on launcher startup
-    invoke<boolean>("is_game_running")
+    if (isTauri()) invoke<boolean>("is_game_running")
       .then((running) => {
         if (running) {
           this.isGameRunning = true;

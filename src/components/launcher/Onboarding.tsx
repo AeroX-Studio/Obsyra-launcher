@@ -63,7 +63,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
   const handleNext = () => setStep((s) => s + 1);
 
   return (
-    <div className="bg-background fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-black/80 backdrop-blur-2xl fixed inset-0 z-50 flex items-center justify-center p-4">
       <AnimatePresence mode="wait">
         {step === 0 && (
           <m.div
@@ -72,13 +72,13 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="border-border/50 bg-card flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-2xl border p-10 text-center shadow-2xl"
+            className="flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-3xl border border-white/15 bg-black/90 p-10 backdrop-blur-3xl text-center shadow-2xl"
           >
-            <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-black p-2 shadow-xl ring-1 ring-white/15 transition-transform hover:scale-105">
+            <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-black/80 p-2.5 shadow-2xl ring-1 ring-white/20 transition-transform hover:scale-105">
               <img
                 src="/obsyra-logo.png"
                 alt="Obsyra Launcher"
-                className="h-20 w-20 object-contain drop-shadow-md"
+                className="h-20 w-20 rounded-2xl object-contain drop-shadow-md"
               />
             </div>
             <div>
@@ -91,7 +91,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             </div>
 
             {/* Language Selection Card */}
-            <div className="border-border/50 bg-background/50 flex w-full flex-col gap-2.5 rounded-xl border p-3.5 shadow-sm">
+            <div className="flex w-full flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 backdrop-blur-md shadow-sm">
               <div className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs font-medium">
                 <Globe className="text-primary h-3.5 w-3.5" />
                 <span>Select Language</span>
@@ -100,7 +100,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
                 value={state?.language || "ENGLISH"}
                 onValueChange={(val) => val && handleLanguageChange(val as Language)}
               >
-                <SelectTrigger className="w-full h-10 border-border/50 bg-card/60 backdrop-blur-sm">
+                <SelectTrigger className="w-full h-10 rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur-sm">
                   <SelectValue>
                     {() => {
                       const sel = ONBOARDING_LANGUAGES.find(
@@ -145,7 +145,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="border-border/50 bg-card flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-2xl border p-10 shadow-2xl"
+            className="flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-3xl border border-white/15 bg-black/90 p-10 backdrop-blur-3xl shadow-2xl"
           >
             <div className="bg-primary/10 text-primary flex h-16 w-16 items-center justify-center rounded-full shadow-inner">
               <UserCircle2 className="h-8 w-8" />
@@ -158,7 +158,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
                 {t("onboarding.profilesDesc")}
               </p>
             </div>
-            <div className="border-border/50 bg-background w-full rounded-xl border p-4 shadow-inner">
+            <div className="w-full rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-md">
               <ProfileSelector />
             </div>
             <Button
@@ -179,7 +179,7 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="border-border/50 bg-card flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-2xl border p-10 text-center shadow-2xl"
+            className="flex w-full max-w-md flex-col items-center justify-center gap-6 rounded-3xl border border-white/15 bg-black/90 p-10 backdrop-blur-3xl text-center shadow-2xl"
           >
             <div className="bg-primary/10 text-primary flex h-24 w-24 items-center justify-center rounded-full shadow-inner">
               <CheckCircle2 className="h-12 w-12" />

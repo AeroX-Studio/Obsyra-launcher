@@ -20,7 +20,7 @@ export const AddonsDialog: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
-            className="border-border/40 bg-card/40 hover:border-primary/40 hover:bg-accent/40 flex h-9 cursor-pointer items-center gap-2 px-3 text-xs backdrop-blur-sm transition-colors"
+            className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-3 text-xs shadow-sm backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/[0.12]"
           />
         }
       >

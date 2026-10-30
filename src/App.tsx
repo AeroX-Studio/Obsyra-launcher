@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Header } from "./components/launcher/Header";
 import { addGameLog } from "./lib/logger";
@@ -91,6 +92,8 @@ const App = () => {
   ]);
 
   useEffect(() => {
+    if (!isTauri()) return;
+
     const unlistenLog = listen<string>("minecraft-log", (event) => {
       addGameLog("info", `[Minecraft] ${event.payload}`);
     });
@@ -127,7 +130,13 @@ const App = () => {
   return (
     <LazyMotion features={domAnimation}>
       <MotionConfig reducedMotion="user">
-        <div className="bg-background text-foreground flex h-screen w-screen flex-col overflow-hidden font-sans">
+        <div className="relative flex h-screen w-screen flex-col overflow-hidden bg-black font-sans text-foreground select-none">
+          {/* Pure OLED Black Glassmorphism Canvas */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden bg-black">
+            <div className="absolute -top-[20%] -left-[10%] h-[550px] w-[550px] rounded-full bg-white/[0.035] blur-[150px]" />
+            <div className="absolute -bottom-[20%] -right-[10%] h-[500px] w-[500px] rounded-full bg-white/[0.025] blur-[160px]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.015)_0%,transparent_75%)]" />
+          </div>
           {showOnboarding && (
             <Onboarding
               onComplete={() => {
@@ -147,8 +156,9 @@ const App = () => {
                   transition={{ duration: 0.5, type: "spring", bounce: 0.3 }}
                   className="flex max-w-full flex-row items-stretch gap-6"
                 >
-                  <div className="bg-card border-border/50 relative flex w-96 max-w-full flex-col gap-6 overflow-hidden rounded-xl border p-6 shadow-2xl backdrop-blur-md">
-                    <div className="from-primary/5 pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent" />
+                  <div className="relative flex w-[390px] max-w-full flex-col gap-6 overflow-hidden rounded-3xl border border-white/15 bg-white/[0.03] p-7 shadow-[0_25px_60px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.25)] backdrop-blur-3xl transition-all duration-300">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.04] via-transparent to-black/50" />
 
                     {/* Background Update Status Banner */}
                     <AnimatePresence>
