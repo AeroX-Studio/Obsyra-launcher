@@ -46,9 +46,7 @@ import { useTranslation } from "react-i18next";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   useDiscordRpc,
-  AUTO_STATUS_PRESETS,
   computePresencePayload,
-  type DiscordActivityMode,
 } from "@/lib/discord";
 import { useAutoUpdater } from "@/lib/updater";
 
@@ -91,7 +89,6 @@ export const SettingsDialog = () => {
     null,
     selectedProfile,
     selectedVersion,
-    discord.rotationIndex,
   );
 
   useEffect(() => {
@@ -1078,7 +1075,7 @@ export const SettingsDialog = () => {
                             )}
                           </h4>
                           <p className="text-xs text-muted-foreground">
-                            Automatically broadcast your active game, 500+ FPS booster stats, and version to your Discord profile
+                            Display your active Obsyra Launcher status cleanly on your Discord profile
                           </p>
                         </div>
                       </div>
@@ -1089,7 +1086,7 @@ export const SettingsDialog = () => {
                     </div>
                   </div>
 
-                  {/* Live Realistic Discord Profile Card Preview */}
+                  {/* Clean Realistic Discord Profile Card Preview */}
                   <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#111214] shadow-2xl">
                     <div className="h-16 w-full bg-gradient-to-r from-[#5865F2]/40 via-[#3c45a5]/30 to-[#111214] relative p-3 flex justify-between items-start border-b border-white/5">
                       <span className="text-[10px] uppercase font-bold tracking-widest text-white/80 bg-black/50 px-2.5 py-0.5 rounded-full border border-white/10 backdrop-blur-md flex items-center gap-1.5">
@@ -1098,7 +1095,7 @@ export const SettingsDialog = () => {
                       </span>
                       <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-700/40 px-2 py-0.5 rounded-full font-mono">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Auto-Updating
+                        Live Output
                       </span>
                     </div>
 
@@ -1137,12 +1134,9 @@ export const SettingsDialog = () => {
                         </div>
 
                         <div className="flex items-center gap-3.5">
-                          {/* Big Image + Small Badge */}
+                          {/* Big Obsyra Logo */}
                           <div className="relative h-16 w-16 shrink-0 rounded-2xl bg-black/60 border border-white/10 p-1 flex items-center justify-center shadow-md">
                             <img src="/obsyra-logo.png" alt="Obsyra Logo" className="h-full w-full object-contain" />
-                            <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/95 border border-white/20 shadow-md">
-                              <Zap className="h-3.5 w-3.5 text-emerald-400" />
-                            </div>
                           </div>
 
                           {/* Activity Details */}
@@ -1151,10 +1145,7 @@ export const SettingsDialog = () => {
                               Obsyra Launcher
                               <CheckCircle2 className="h-3.5 w-3.5 text-blue-400 shrink-0" />
                             </div>
-                            <div className="text-xs font-semibold text-white/90 truncate flex items-center gap-1.5">
-                              {discord.config.autoRotateStatus && discord.config.activityMode === "auto" && (
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                              )}
+                            <div className="text-xs font-semibold text-white/90 truncate">
                               {computedDiscordPresence.details}
                             </div>
                             <div className="text-xs text-white/60 truncate font-mono">
@@ -1168,157 +1159,18 @@ export const SettingsDialog = () => {
                             )}
                           </div>
                         </div>
-
-                        {/* Interactive Discord Buttons */}
-                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/5">
-                          <button className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2b2d31] hover:bg-[#35373c] py-2 px-3 text-xs font-semibold text-white border border-white/5 transition-colors cursor-default">
-                            <Zap className="h-3.5 w-3.5 text-emerald-400" />
-                            <span>Play on Obsyra</span>
-                          </button>
-                          <button className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2b2d31] hover:bg-[#35373c] py-2 px-3 text-xs font-semibold text-white border border-white/5 transition-colors cursor-default">
-                            <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-                            <span>AeroX Studio</span>
-                          </button>
-                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Auto-Changing Activity Mode Presets */}
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-lg flex flex-col gap-4">
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-bold text-white tracking-wide uppercase">
-                          Dynamic Presence Mode
-                        </h4>
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          Auto-Switching Engine
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Select a professional dynamic activity profile tailored to your gaming style
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {AUTO_STATUS_PRESETS.map((preset) => {
-                        const isSelected = discord.config.activityMode === preset.id;
-                        const IconComponent =
-                          preset.id === "auto"
-                            ? Sparkles
-                            : preset.id === "competitive"
-                              ? Swords
-                              : preset.id === "survival"
-                                ? Compass
-                                : Cpu;
-
-                        return (
-                          <div
-                            key={preset.id}
-                            onClick={() => discord.updateConfig({ activityMode: preset.id })}
-                            className={`group relative flex flex-col justify-between rounded-xl border p-3.5 transition-all cursor-pointer ${
-                              isSelected
-                                ? "border-emerald-500/60 bg-emerald-950/25 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
-                                : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.06]"
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className={`flex h-7 w-7 items-center justify-center rounded-lg border ${
-                                    isSelected
-                                      ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
-                                      : "border-white/10 bg-white/[0.04] text-white/60 group-hover:text-white"
-                                  }`}
-                                >
-                                  <IconComponent className="h-4 w-4" />
-                                </div>
-                                <div>
-                                  <div className="text-xs font-bold text-white leading-tight">
-                                    {preset.title}
-                                  </div>
-                                  <span
-                                    className={`text-[9px] font-mono uppercase px-1.5 py-0.2 rounded border inline-block mt-0.5 ${
-                                      isSelected
-                                        ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-300"
-                                        : "border-white/10 bg-white/[0.05] text-white/40"
-                                    }`}
-                                  >
-                                    {preset.badge}
-                                  </span>
-                                </div>
-                              </div>
-                              <div
-                                className={`flex h-4 w-4 items-center justify-center rounded-full border transition-all ${
-                                  isSelected
-                                    ? "border-emerald-400 bg-emerald-400 text-black"
-                                    : "border-white/20 bg-transparent"
-                                }`}
-                              >
-                                {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-black" />}
-                              </div>
-                            </div>
-
-                            <p className="text-[11px] text-muted-foreground mt-2 line-clamp-2">
-                              {preset.desc}
-                            </p>
-
-                            <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/60">
-                              <span>Output:</span>
-                              <span className="text-emerald-400 font-semibold">{preset.previewDetails}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Dynamic Presence Feature Toggles */}
+                  {/* Presence Display Options */}
                   <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-lg flex flex-col gap-4">
                     <h4 className="text-xs font-bold text-white tracking-wide uppercase">
-                      Dynamic Presence Controls
+                      Presence Display Options
                     </h4>
 
-                    {/* Auto-Rotate Status Line */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-semibold text-white flex items-center gap-2">
-                          Auto-Change Launcher Status
-                          <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full font-mono">
-                            Auto-Cycle (25s)
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-muted-foreground">
-                          Smoothly cycles between professional launcher activity phrases while you browse
-                        </div>
-                      </div>
-                      <Switch
-                        checked={discord.config.autoRotateStatus}
-                        onCheckedChange={(checked) => discord.updateConfig({ autoRotateStatus: checked })}
-                      />
-                    </div>
-
-                    {/* Show FPS Booster Badge */}
-                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                      <div>
-                        <div className="text-xs font-semibold text-white flex items-center gap-2">
-                          Show 500+ FPS Booster Engine
-                          <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-mono">
-                            ⚡ Real FPS
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-muted-foreground">
-                          Broadcast active discrete GPU acceleration & zero-stutter GC tuning in status
-                        </div>
-                      </div>
-                      <Switch
-                        checked={discord.config.showFpsBooster}
-                        onCheckedChange={(checked) => discord.updateConfig({ showFpsBooster: checked })}
-                      />
-                    </div>
-
                     {/* Show Minecraft Version */}
-                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                    <div className="flex items-center justify-between">
                       <div>
                         <div className="text-xs font-semibold text-white">Show Minecraft Version</div>
                         <div className="text-[11px] text-muted-foreground">Display active Minecraft version on Discord profile</div>
@@ -1345,7 +1197,7 @@ export const SettingsDialog = () => {
                     <div className="flex items-center justify-between pt-2 border-t border-white/10">
                       <div>
                         <div className="text-xs font-semibold text-white">Show Session Playtime Timer</div>
-                        <div className="text-[11px] text-muted-foreground">Display live elapsed game and launcher duration on Discord</div>
+                        <div className="text-[11px] text-muted-foreground">Display live elapsed session duration on Discord</div>
                       </div>
                       <Switch
                         checked={discord.config.showTimer}
