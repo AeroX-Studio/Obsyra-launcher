@@ -49,6 +49,13 @@ export interface LauncherState {
   highProcessPriority: boolean;
   preTouchMemory: boolean;
   optimizeGameGc: boolean;
+  mouseSensitivity: number;
+  fov: number;
+  invertMouse: boolean;
+  autoJump: boolean;
+  lockInstanceDeletion: boolean;
+  playtimeLimitHours: number;
+  safeModeAddons: boolean;
 }
 
 export interface MinecraftVersion {
@@ -143,6 +150,13 @@ export const DEFAULT_LAUNCHER_STATE: LauncherState = {
   highProcessPriority: true,
   preTouchMemory: true,
   optimizeGameGc: true,
+  mouseSensitivity: 1.0,
+  fov: 70,
+  invertMouse: false,
+  autoJump: false,
+  lockInstanceDeletion: false,
+  playtimeLimitHours: 0,
+  safeModeAddons: false,
 };
 
 export const DEFAULT_PROFILES: Profile[] = [
@@ -406,6 +420,10 @@ export const useLauncherStore = create<LauncherStore>((set, get) => ({
   },
 
   deleteInstance: async (versionId: string) => {
+    if (get().state?.lockInstanceDeletion) {
+      console.warn("[Obsyra State] Deletion blocked by User Safety lock.");
+      return;
+    }
     if (!isTauri()) {
       const updated = get().versions.filter((v) => v.id !== versionId);
       saveStoredWebVersions(updated);

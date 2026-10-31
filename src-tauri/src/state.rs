@@ -45,6 +45,22 @@ fn default_fps_preset() -> String {
     "competitive".to_string()
 }
 
+fn default_mouse_sensitivity() -> f32 {
+    1.0
+}
+
+fn default_fov() -> i32 {
+    70
+}
+
+fn default_false() -> bool {
+    false
+}
+
+fn default_zero() -> i32 {
+    0
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LauncherState {
@@ -82,6 +98,21 @@ pub struct LauncherState {
     pub pre_touch_memory: bool,
     #[serde(default = "default_true")]
     pub optimize_game_gc: bool,
+
+    #[serde(default = "default_mouse_sensitivity")]
+    pub mouse_sensitivity: f32,
+    #[serde(default = "default_fov")]
+    pub fov: i32,
+    #[serde(default = "default_false")]
+    pub invert_mouse: bool,
+    #[serde(default = "default_false")]
+    pub auto_jump: bool,
+    #[serde(default = "default_false")]
+    pub lock_instance_deletion: bool,
+    #[serde(default = "default_zero")]
+    pub playtime_limit_hours: i32,
+    #[serde(default = "default_false")]
+    pub safe_mode_addons: bool,
 }
 
 impl Default for LauncherState {
@@ -110,6 +141,13 @@ impl Default for LauncherState {
             high_process_priority: true,
             pre_touch_memory: true,
             optimize_game_gc: true,
+            mouse_sensitivity: 1.0,
+            fov: 70,
+            invert_mouse: false,
+            auto_jump: false,
+            lock_instance_deletion: false,
+            playtime_limit_hours: 0,
+            safe_mode_addons: false,
         }
     }
 }
@@ -118,6 +156,9 @@ impl LauncherState {
     pub fn normalize(&mut self) {
         self.scale = self.scale.max(1);
         self.memory_amount = self.memory_amount.clamp(512, 65536);
+        self.mouse_sensitivity = self.mouse_sensitivity.clamp(0.1, 3.0);
+        self.fov = self.fov.clamp(30, 110);
+        self.playtime_limit_hours = self.playtime_limit_hours.clamp(0, 12);
         if self.auto_memory {
             let sys = sysinfo::System::new_with_specifics(
                 sysinfo::RefreshKind::nothing()

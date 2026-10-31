@@ -14,15 +14,17 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLauncherStore } from "@/state";
 import { getVersion } from "@tauri-apps/api/app";
-import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles, Gauge, Rocket, Sliders, Flame, MonitorPlay } from "lucide-react";
+import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles, Gauge, Rocket, Sliders, Flame, MonitorPlay, User, Shield, Lock, Unlock, Eye, MousePointer, Plus, Trash2 } from "lucide-react";
+import { ProfileAvatar } from "./ProfileAvatar";
 import { useTranslation } from "react-i18next";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { useDiscordRpc } from "@/lib/discord";
 import { useAutoUpdater } from "@/lib/updater";
 
 export const SettingsDialog = () => {
-  const { state, updateState, versions, profiles, fetchVersions, startupTimeMs, appMemoryMb, systemSpecs, fetchSystemSpecs, applyFpsOptimization } =
+  const { state, updateState, versions, profiles, fetchVersions, startupTimeMs, appMemoryMb, systemSpecs, fetchSystemSpecs, applyFpsOptimization, selectProfile, removeProfile, addOfflineProfile } =
     useLauncherStore();
+  const [newOfflineUser, setNewOfflineUser] = useState<string>("");
   const { t } = useTranslation();
   const [appVersion, setAppVersion] = useState<string>("1.0.0");
   const [totalPlaytime, setTotalPlaytime] = useState<string | null>(null);
@@ -59,6 +61,16 @@ export const SettingsDialog = () => {
       .catch(() => {});
   }, []);
 
+  const activeProfile = profiles.find((p) => p.id === state?.selectedProfileId) || profiles[0];
+
+  const handleAddOfflineUser = () => {
+    const trimmed = newOfflineUser.trim();
+    if (trimmed) {
+      addOfflineProfile(trimmed);
+      setNewOfflineUser("");
+    }
+  };
+
   if (!state) return null;
 
   return (
@@ -74,16 +86,20 @@ export const SettingsDialog = () => {
       >
         <Settings className="h-5 w-5" />
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[620px]">
+      <DialogContent className="sm:max-w-[660px]">
         <DialogHeader>
           <DialogTitle>{t("settings.title")}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="game" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md">
+          <TabsList className="grid w-full grid-cols-7 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md">
             <TabsTrigger value="game">{t("settings.game")}</TabsTrigger>
-            <TabsTrigger value="booster" className="flex items-center gap-1 font-semibold text-emerald-400">
+            <TabsTrigger value="booster" className="flex items-center gap-1 font-semibold text-emerald-400 text-xs">
               <Zap className="h-3 w-3 fill-emerald-400" />
-              <span>FPS Booster</span>
+              <span>FPS</span>
+            </TabsTrigger>
+            <TabsTrigger value="controls" className="flex items-center gap-1 font-semibold text-sky-400 text-xs">
+              <Sliders className="h-3 w-3 text-sky-400" />
+              <span>Controls</span>
             </TabsTrigger>
             <TabsTrigger value="window">{t("settings.window")}</TabsTrigger>
             <TabsTrigger value="versions">{t("settings.versions")}</TabsTrigger>
@@ -413,6 +429,331 @@ export const SettingsDialog = () => {
                     }
                   />
                 </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* User Controls, Accounts & Safety Hub */}
+          <TabsContent value="controls" className="flex flex-col gap-4 py-3 max-h-[460px] overflow-y-auto pr-1">
+            {/* Section 1: User & Profile Management */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                      Active Player Profile
+                      <span className="text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono uppercase">
+                        {activeProfile?.microsoft ? "Microsoft" : "Offline"}
+                      </span>
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground">
+                      Switch accounts, register nicknames, and manage player credentials
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Current Active Account Showcase */}
+              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 p-3 mb-3">
+                <div className="flex items-center gap-3">
+                  {activeProfile ? (
+                    <ProfileAvatar username={activeProfile.username} size={40} className="h-10 w-10 rounded-lg border border-white/10 shadow-sm" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center">
+                      <User className="h-5 w-5 text-white/50" />
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-sm font-semibold text-white">
+                      {activeProfile?.username || "Player"}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                      Currently Selected for Launch
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-right font-mono text-[11px] text-muted-foreground">
+                  ID: <span className="text-white/80">{activeProfile?.id?.slice(0, 12) || "local"}</span>
+                </div>
+              </div>
+
+              {/* All Configured Profiles List */}
+              <div className="flex flex-col gap-1.5 mb-3">
+                <div className="text-[11px] font-medium text-white/70 px-1">Registered Accounts ({profiles.length})</div>
+                <div className="flex flex-col gap-1 max-h-[140px] overflow-y-auto pr-1">
+                  {profiles.map((p) => {
+                    const isActive = p.id === state.selectedProfileId;
+                    return (
+                      <div
+                        key={p.id}
+                        className={`flex items-center justify-between rounded-xl px-3 py-2 border transition-all ${
+                          isActive
+                            ? "border-sky-500/40 bg-sky-500/10 text-white"
+                            : "border-white/5 bg-black/20 hover:border-white/15 hover:bg-white/[0.03]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <ProfileAvatar username={p.username} size={24} className="h-6 w-6 rounded-md border border-white/10" />
+                          <span className="text-xs font-medium truncate">{p.username}</span>
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            {p.microsoft ? "(License)" : "(Offline)"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {isActive ? (
+                            <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono">
+                              Active
+                            </span>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => selectProfile(p.id)}
+                              className="h-6 px-2 text-[11px] bg-white/[0.05] hover:bg-white/[0.1] text-white border border-white/10"
+                            >
+                              Select
+                            </Button>
+                          )}
+                          {profiles.length > 1 && !isActive && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeProfile(p.id)}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"
+                              title="Remove Account"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Quick Add Offline Account */}
+              <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                <Input
+                  value={newOfflineUser}
+                  onChange={(e) => setNewOfflineUser(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddOfflineUser()}
+                  placeholder="Add offline nickname (e.g. Alex_Pro)..."
+                  className="h-8 text-xs bg-black/40 border-white/10 rounded-xl"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleAddOfflineUser}
+                  disabled={!newOfflineUser.trim()}
+                  className="h-8 px-3 text-xs bg-white text-black hover:bg-white/90 font-medium rounded-xl shrink-0 cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  Add User
+                </Button>
+              </div>
+            </div>
+
+            {/* Section 2: In-Game Input & Gameplay Controls */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-lg flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 shadow-[0_0_15px_rgba(167,139,250,0.2)]">
+                  <Sliders className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                    Game Controls & In-Game Sync
+                    <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full font-mono uppercase">
+                      Auto-Sync
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground">
+                    Options are synchronized directly to Minecraft options.txt before launch
+                  </p>
+                </div>
+              </div>
+
+              {/* Mouse Sensitivity */}
+              <div className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/30 p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MousePointer className="h-3.5 w-3.5 text-violet-400" />
+                    <Label className="text-xs font-semibold text-white">Mouse Sensitivity</Label>
+                  </div>
+                  <span className="text-xs font-mono text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-md">
+                    {state.mouseSensitivity.toFixed(2)}x {state.mouseSensitivity < 0.7 ? "(Slow)" : state.mouseSensitivity > 1.3 ? "(Hyperspeed)" : "(Normal)"}
+                  </span>
+                </div>
+                <Slider
+                  min={0.2}
+                  max={2.0}
+                  step={0.05}
+                  value={[state.mouseSensitivity]}
+                  onValueChange={(vals) => updateState({ ...state, mouseSensitivity: vals[0] ?? 1.0 })}
+                  className="w-full py-1"
+                />
+                <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
+                  <span>0.2x (Precision)</span>
+                  <span>1.0x (Standard 100%)</span>
+                  <span>2.0x (Hyperspeed)</span>
+                </div>
+              </div>
+
+              {/* FOV (Field of View) */}
+              <div className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/30 p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-3.5 w-3.5 text-violet-400" />
+                    <Label className="text-xs font-semibold text-white">Field of View (FOV)</Label>
+                  </div>
+                  <span className="text-xs font-mono text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-md">
+                    {state.fov}° {state.fov <= 50 ? "(Zoom)" : state.fov === 70 ? "(Default Normal)" : state.fov >= 100 ? "(Quake Pro)" : "(Wide)"}
+                  </span>
+                </div>
+                <Slider
+                  min={30}
+                  max={110}
+                  step={1}
+                  value={[state.fov]}
+                  onValueChange={(vals) => updateState({ ...state, fov: vals[0] ?? 70 })}
+                  className="w-full py-1"
+                />
+                <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
+                  <span>30° (Narrow)</span>
+                  <span>70° (Normal)</span>
+                  <span>90° (Speed)</span>
+                  <span>110° (Quake Pro)</span>
+                </div>
+              </div>
+
+              {/* Invert Mouse Y-Axis & Auto-Jump Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/30 p-3">
+                  <div className="min-w-0 pr-2">
+                    <div className="text-xs font-semibold text-white">Invert Y-Axis</div>
+                    <div className="text-[10px] text-muted-foreground">Invert mouse vertical pitch</div>
+                  </div>
+                  <Switch
+                    checked={state.invertMouse}
+                    onCheckedChange={(checked) => updateState({ ...state, invertMouse: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/30 p-3">
+                  <div className="min-w-0 pr-2">
+                    <div className="text-xs font-semibold text-white">Auto-Jump</div>
+                    <div className="text-[10px] text-muted-foreground">Jump over single-block ledges</div>
+                  </div>
+                  <Switch
+                    checked={state.autoJump}
+                    onCheckedChange={(checked) => updateState({ ...state, autoJump: checked })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: User Access & Safety Controls */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-lg flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                    User Access & Safety Controls
+                    <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-mono uppercase">
+                      Parental / Protection
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground">
+                    Instance protection locks, play session reminders, and safe addon sandboxing
+                  </p>
+                </div>
+              </div>
+
+              {/* Lock Instance Deletion */}
+              <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/30 p-3">
+                <div className="flex items-center gap-3 min-w-0 pr-3">
+                  <div className={`p-2 rounded-lg border ${state.lockInstanceDeletion ? "bg-red-500/20 text-red-400 border-red-500/30" : "bg-white/5 text-muted-foreground border-white/10"}`}>
+                    {state.lockInstanceDeletion ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-white flex items-center gap-2">
+                      Lock Instance & World Deletion
+                      {state.lockInstanceDeletion && (
+                        <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-1.5 py-0.5 rounded font-mono">
+                          LOCKED
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      Blocks instance and world deletion across the launcher to prevent accidental data loss
+                    </div>
+                  </div>
+                </div>
+                <Switch
+                  checked={state.lockInstanceDeletion}
+                  onCheckedChange={(checked) => updateState({ ...state, lockInstanceDeletion: checked })}
+                />
+              </div>
+
+              {/* Playtime Limit Reminder */}
+              <div className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/30 p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-3.5 w-3.5 text-amber-400" />
+                    <Label className="text-xs font-semibold text-white">Daily Playtime Reminder</Label>
+                  </div>
+                  <span className="text-xs font-mono text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+                    {state.playtimeLimitHours === 0 ? "Disabled" : `Every ${state.playtimeLimitHours}h`}
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-2 pt-1">
+                  {[
+                    { hours: 0, label: "Disabled" },
+                    { hours: 1, label: "1 Hour" },
+                    { hours: 2, label: "2 Hours" },
+                    { hours: 4, label: "4 Hours" },
+                  ].map((item) => {
+                    const isSelected = state.playtimeLimitHours === item.hours;
+                    return (
+                      <Button
+                        key={item.hours}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => updateState({ ...state, playtimeLimitHours: item.hours })}
+                        className={`h-8 text-xs font-medium rounded-xl border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm"
+                            : "bg-white/[0.03] text-muted-foreground border-white/10 hover:bg-white/[0.06] hover:text-white"
+                        }`}
+                      >
+                        {item.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  Sends gentle notifications recommending a screen break during long gaming sessions
+                </div>
+              </div>
+
+              {/* Safe Mode Addons */}
+              <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/30 p-3">
+                <div className="min-w-0 pr-3">
+                  <div className="text-xs font-semibold text-white">Strict Safe Addon Mode</div>
+                  <div className="text-[11px] text-muted-foreground">
+                    Enforce integrity checks on downloaded jars and block unverified external scripts
+                  </div>
+                </div>
+                <Switch
+                  checked={state.safeModeAddons}
+                  onCheckedChange={(checked) => updateState({ ...state, safeModeAddons: checked })}
+                />
               </div>
             </div>
           </TabsContent>

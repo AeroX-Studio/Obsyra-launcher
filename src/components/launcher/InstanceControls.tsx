@@ -1,5 +1,5 @@
 import React from "react";
-import { FolderOpen, Trash2 } from "lucide-react";
+import { FolderOpen, Trash2, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,8 @@ export const InstanceControls: React.FC<InstanceControlsProps> = ({
   versionId,
 }) => {
   const { t } = useTranslation();
-  const { openVersionFolder, deleteInstance } = useLauncherStore();
+  const { openVersionFolder, deleteInstance, state } = useLauncherStore();
+  const isLocked = state?.lockInstanceDeletion ?? false;
 
   return (
     <m.div
@@ -44,41 +45,54 @@ export const InstanceControls: React.FC<InstanceControlsProps> = ({
           <FolderOpen className="h-4 w-4" />
         </Button>
       </m.div>
-      <Dialog>
-        <DialogTrigger
-          render={
-            <Button
-              variant="destructive"
-              size="icon"
-              title={t("version.deleteInstance")}
-              className="hover:bg-destructive/90 transition-colors hover:shadow-md"
-            />
-          }
+
+      {isLocked ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          disabled
+          title="Instance deletion is locked by User Safety Controls (Settings -> Controls)"
+          className="opacity-40 cursor-not-allowed border border-white/10 bg-white/[0.03] text-muted-foreground"
         >
-          <Trash2 className="h-4 w-4" />
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("version.deleteInstance")}</DialogTitle>
-            <DialogDescription>{t("version.confirmDelete")}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
-              {t("common.cancel")}
-            </DialogClose>
-            <DialogClose
-              render={
-                <Button
-                  variant="destructive"
-                  onClick={() => deleteInstance(versionId)}
-                />
-              }
-            >
-              {t("version.delete")}
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <Lock className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Dialog>
+          <DialogTrigger
+            render={
+              <Button
+                variant="destructive"
+                size="icon"
+                title={t("version.deleteInstance")}
+                className="hover:bg-destructive/90 transition-colors hover:shadow-md"
+              />
+            }
+          >
+            <Trash2 className="h-4 w-4" />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("version.deleteInstance")}</DialogTitle>
+              <DialogDescription>{t("version.confirmDelete")}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose render={<Button variant="outline" />}>
+                {t("common.cancel")}
+              </DialogClose>
+              <DialogClose
+                render={
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteInstance(versionId)}
+                  />
+                }
+              >
+                {t("version.delete")}
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </m.div>
   );
 };

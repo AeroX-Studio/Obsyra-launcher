@@ -148,6 +148,41 @@ pub fn is_safe_jvm_arg(arg: &str) -> bool {
     true
 }
 
+fn sync_minecraft_options(
+    instance_dir: &std::path::Path,
+    sensitivity: f32,
+    fov: i32,
+    invert_mouse: bool,
+    auto_jump: bool,
+) {
+    let options_path = instance_dir.join("options.txt");
+    let mut map: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
+
+    if options_path.exists() {
+        if let Ok(content) = std::fs::read_to_string(&options_path) {
+            for line in content.lines() {
+                if let Some((k, v)) = line.split_once(':') {
+                    map.insert(k.trim().to_string(), v.trim().to_string());
+                }
+            }
+        }
+    }
+
+    let mc_sensitivity = (sensitivity * 0.5).clamp(0.0, 1.0);
+    let mc_fov = ((fov as f32 - 70.0) / 40.0).clamp(-1.0, 1.0);
+
+    map.insert("mouseSensitivity".to_string(), format!("{:.4}", mc_sensitivity));
+    map.insert("fov".to_string(), format!("{:.4}", mc_fov));
+    map.insert("invertYMouse".to_string(), (if invert_mouse { "true" } else { "false" }).to_string());
+    map.insert("autoJump".to_string(), (if auto_jump { "true" } else { "false" }).to_string());
+
+    let mut out = String::new();
+    for (k, v) in map {
+        out.push_str(&format!("{}:{}\n", k, v));
+    }
+    let _ = std::fs::write(options_path, out);
+}
+
 #[tauri::command]
 fn get_launcher_state(state: State<'_, AppState>) -> Result<LauncherState, String> {
     let state = state.launcher_state.lock().map_err(|e| e.to_string())?;
@@ -559,6 +594,14 @@ async fn launch_game_inner(
     if !iso_dir.exists() {
         let _ = std::fs::create_dir_all(&iso_dir);
     }
+
+    sync_minecraft_options(
+        &iso_dir,
+        launcher_state.mouse_sensitivity,
+        launcher_state.fov,
+        launcher_state.invert_mouse,
+        launcher_state.auto_jump,
+    );
 
     launcher.set_execution_directory(iso_dir);
 
@@ -1219,6 +1262,14 @@ fn delete_instance(
     app: tauri::AppHandle,
 ) -> Result<(), String> {
     validate_safe_id(&version_id)?;
+
+    {
+        let current_state = state.launcher_state.lock().map_err(|e| e.to_string())?;
+        if current_state.lock_instance_deletion {
+            return Err("Instance deletion is locked by User Access & Safety Controls. Please unlock it in Settings -> Controls.".to_string());
+        }
+    }
+
     let mc_dir = crate::minecraft::versions::get_minecraft_dir();
 
     let instance_dir = mc_dir.join("instances").join(&version_id);
