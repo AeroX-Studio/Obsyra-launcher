@@ -41,23 +41,28 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  fullscreen = false,
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean;
+  fullscreen?: boolean;
 }) {
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay className={fullscreen ? "bg-black/95 duration-100" : undefined} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
+        data-fullscreen={fullscreen ? "true" : undefined}
         className={cn(
-          "border border-white/15 bg-black/90 text-popover-foreground shadow-[0_25px_70px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.25)] backdrop-blur-3xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100vh-2rem)] w-full max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden rounded-3xl p-5 text-sm duration-150 outline-none sm:max-w-sm",
+          fullscreen
+            ? "fixed inset-0 top-0 left-0 z-50 flex h-screen w-screen max-w-none max-h-none -translate-x-0 -translate-y-0 transform-none flex-col overflow-hidden rounded-none border-0 bg-black p-0 text-sm duration-100 outline-none"
+            : "border border-white/15 bg-black/90 text-popover-foreground shadow-[0_25px_70px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.25)] backdrop-blur-3xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100vh-2rem)] w-full max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden rounded-3xl p-5 text-sm duration-150 outline-none sm:max-w-sm",
           className,
         )}
         {...props}
       >
         {children}
-        {showCloseButton && (
+        {showCloseButton && !fullscreen && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
             render={

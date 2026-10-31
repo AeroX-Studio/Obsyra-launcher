@@ -175,13 +175,32 @@ input[id*="hidden-input"],
 }
 
 /* Global modal and dialog viewport bounds and padding enforcement */
-[data-slot="dialog-content"],
-[data-base-ui-dialog-popup] {
-  max-width: calc(100vw - 2.5rem) !important;
+[data-slot="dialog-content"]:not([data-fullscreen="true"]),
+[data-base-ui-dialog-popup]:not([data-fullscreen="true"]) {
+  max-width: min(calc(100vw - 2.5rem), 680px) !important;
   max-height: calc(100vh - 2.5rem) !important;
   padding: 1.25rem !important;
   gap: 1rem !important;
   overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+}
+
+[data-slot="dialog-content"][data-fullscreen="true"],
+[data-base-ui-dialog-popup][data-fullscreen="true"] {
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
