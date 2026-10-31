@@ -569,4 +569,52 @@ export const useLauncherStore = create<LauncherStore>((set, get) => ({
       throw error;
     }
   },
+
+  systemSpecs: null,
+
+  fetchSystemSpecs: async () => {
+    if (!isTauri()) {
+      set({
+        systemSpecs: {
+          cpuName: "Multi-Core High Performance Processor",
+          cpuCores: 8,
+          totalMemoryMb: 16384,
+          availableMemoryMb: 9216,
+          recommendedMemoryMb: 6144,
+          osName: "Windows / Desktop OS",
+          gpuName: "Discrete Hardware GPU Accelerator",
+        },
+      });
+      return;
+    }
+    const specs = await safeInvoke<SystemSpecs>("get_system_specs", undefined, {
+      cpuName: "Host Processor",
+      cpuCores: 8,
+      totalMemoryMb: 16384,
+      availableMemoryMb: 8192,
+      recommendedMemoryMb: 4096,
+      osName: "Desktop Environment",
+      gpuName: "High Performance GPU",
+    });
+    if (specs) {
+      set({ systemSpecs: specs });
+    }
+  },
+
+  applyFpsOptimization: async (preset: FpsPreset) => {
+    const currentState = get().state;
+    if (!currentState) return;
+    const recommendedRam = get().systemSpecs?.recommendedMemoryMb || 4096;
+    const updated: LauncherState = {
+      ...currentState,
+      fpsBoosterEnabled: true,
+      fpsPreset: preset,
+      forceDiscreteGpu: true,
+      highProcessPriority: true,
+      preTouchMemory: true,
+      optimizeGameGc: true,
+      memoryAmount: recommendedRam,
+    };
+    await get().updateState(updated);
+  },
 }));

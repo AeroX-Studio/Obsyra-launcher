@@ -41,7 +41,9 @@ export const SettingsDialog = () => {
     "Player";
 
   useEffect(() => {
-    fetchSystemSpecs();
+    if (typeof fetchSystemSpecs === "function") {
+      fetchSystemSpecs();
+    }
     if (!isTauri()) {
       setTotalPlaytime("16h 05m");
       return;
