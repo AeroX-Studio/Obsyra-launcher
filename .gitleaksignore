@@ -1,2 +1,4 @@
 # False positive: default offline Minecraft player token
 fe99c00c218548e465bb31396d3429d77c1a5767:src-tauri/src/open_launcher/auth.rs:generic-api-key:37
+# False positive: synthetic mock public key used for unit tests
+e76bf7d7fd05ad9b731fbc0682aec364d4960b8a:scripts/test-signing-key.js:generic-api-key:105
