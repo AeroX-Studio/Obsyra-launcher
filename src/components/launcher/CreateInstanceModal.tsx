@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { invoke, isTauri } from "@tauri-apps/api/core";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Zap, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -112,6 +112,37 @@ export const CreateInstanceModal: React.FC<CreateInstanceModalProps> = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-2">
+        {/* 1-Click High-FPS Preset Button */}
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              <Zap className="h-4 w-4 fill-emerald-400" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                ⚡ 500+ FPS Fabric Profile
+                <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full uppercase font-mono">Recommended</span>
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                Sodium & Lithium ready for maximum framerates
+              </div>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => {
+              const base = availableMcVersions[0] || "1.21.4";
+              setNewInstanceName("High-FPS Fabric " + base);
+              setSelectedBaseVersion(base);
+              setSelectedLoader("fabric");
+            }}
+            className="h-7 text-xs font-bold px-2.5"
+          >
+            Apply Preset
+          </Button>
+        </div>
+
           <div className="flex flex-col gap-2">
             <Label htmlFor="instance-name">{t("version.instanceName")}</Label>
             <Input

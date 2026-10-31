@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { Play, Download } from "lucide-react";
+import { Play, Download, Zap } from "lucide-react";
 import { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useLauncherStore } from "@/state";
@@ -198,7 +198,18 @@ export const LaunchButton = () => {
   if (!state) return null;
 
   return (
-    <div className="mt-auto flex flex-col gap-3 pt-4">
+    <div className="mt-auto flex flex-col gap-2.5 pt-4">
+      {state.fpsBoosterEnabled && (
+        <div className="flex items-center justify-between px-1 text-[11px] font-mono">
+          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold tracking-wider">
+            <Zap className="h-3.5 w-3.5 fill-emerald-400 animate-pulse" />
+            <span>REAL FPS BOOSTER</span>
+          </span>
+          <span className="text-[10px] text-white/70 bg-white/[0.06] border border-white/10 px-2 py-0.5 rounded-full uppercase font-sans font-medium">
+            {state.fpsPreset} mode
+          </span>
+        </div>
+      )}
       <m.div
         whileHover={{ scale: isRunning || isLaunching ? 1 : 1.02 }}
         whileTap={{ scale: isRunning || isLaunching ? 1 : 0.98 }}

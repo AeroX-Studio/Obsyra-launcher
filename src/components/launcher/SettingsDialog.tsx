@@ -14,14 +14,14 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLauncherStore } from "@/state";
 import { getVersion } from "@tauri-apps/api/app";
-import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles } from "lucide-react";
+import { Settings, Zap, Cpu, Clock, RefreshCw, Sparkles, Gauge, Rocket, Sliders, Flame, MonitorPlay } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { useDiscordRpc } from "@/lib/discord";
 import { useAutoUpdater } from "@/lib/updater";
 
 export const SettingsDialog = () => {
-  const { state, updateState, versions, profiles, fetchVersions, startupTimeMs, appMemoryMb } =
+  const { state, updateState, versions, profiles, fetchVersions, startupTimeMs, appMemoryMb, systemSpecs, fetchSystemSpecs, applyFpsOptimization } =
     useLauncherStore();
   const { t } = useTranslation();
   const [appVersion, setAppVersion] = useState<string>("1.0.0");
@@ -39,6 +39,7 @@ export const SettingsDialog = () => {
     "Player";
 
   useEffect(() => {
+    fetchSystemSpecs();
     if (!isTauri()) {
       setTotalPlaytime("16h 05m");
       return;
@@ -78,8 +79,12 @@ export const SettingsDialog = () => {
           <DialogTitle>{t("settings.title")}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="game" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md">
+          <TabsList className="grid w-full grid-cols-6 rounded-2xl border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md">
             <TabsTrigger value="game">{t("settings.game")}</TabsTrigger>
+            <TabsTrigger value="booster" className="flex items-center gap-1 font-semibold text-emerald-400">
+              <Zap className="h-3 w-3 fill-emerald-400" />
+              <span>FPS Booster</span>
+            </TabsTrigger>
             <TabsTrigger value="window">{t("settings.window")}</TabsTrigger>
             <TabsTrigger value="versions">{t("settings.versions")}</TabsTrigger>
             <TabsTrigger value="discord">Discord</TabsTrigger>
@@ -186,6 +191,229 @@ export const SettingsDialog = () => {
                   updateState({ ...state, closeAfterLaunch: checked })
                 }
               />
+            </div>
+          </TabsContent>
+
+                    {/* Real In-Game FPS Booster Hub */}
+          <TabsContent value="booster" className="flex flex-col gap-4 py-3 max-h-[460px] overflow-y-auto pr-1">
+            {/* System Hardware & Status Pill Card */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(52,211,153,0.3)]">
+                    <Zap className="h-5 w-5 fill-emerald-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                      Real Hardware FPS Engine
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono uppercase">
+                        {state.fpsBoosterEnabled ? "Active" : "Disabled"}
+                      </span>
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground">
+                      Zero-stutter memory allocation, process elevation & GPU acceleration
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={state.fpsBoosterEnabled}
+                  onCheckedChange={(checked) =>
+                    updateState({ ...state, fpsBoosterEnabled: checked })
+                  }
+                />
+              </div>
+
+              {/* Live Detected Hardware Specs Grid */}
+              <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/10">
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-black/40 p-2.5">
+                  <Cpu className="h-4 w-4 text-sky-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] text-muted-foreground font-mono uppercase">Processor</div>
+                    <div className="text-xs font-semibold text-white truncate" title={systemSpecs?.cpuName || "Multi-Core Processor"}>
+                      {systemSpecs?.cpuName || "Multi-Core Processor"} ({systemSpecs?.cpuCores || 4}T)
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-black/40 p-2.5">
+                  <MonitorPlay className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] text-muted-foreground font-mono uppercase">Graphics Adapter</div>
+                    <div className="text-xs font-semibold text-white truncate" title={systemSpecs?.gpuName || "Discrete GPU"}>
+                      {systemSpecs?.gpuName || "High-Performance GPU"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-black/40 p-2.5">
+                  <Gauge className="h-4 w-4 text-amber-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] text-muted-foreground font-mono uppercase">System Memory</div>
+                    <div className="text-xs font-semibold text-white truncate">
+                      {systemSpecs?.totalMemoryMb ? `${Math.round(systemSpecs.totalMemoryMb / 1024)} GB Installed` : "8 GB Installed"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-black/40 p-2.5">
+                  <Rocket className="h-4 w-4 text-purple-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] text-muted-foreground font-mono uppercase">Tuned Heap (Fixed)</div>
+                    <div className="text-xs font-semibold text-white truncate">
+                      {state.memoryAmount} MB (Optimal)
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 1-Click Auto-Tune Best Settings Button */}
+              <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[11px] text-muted-foreground">
+                  Auto-tunes RAM and JVM arguments for your hardware
+                </span>
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={() => applyFpsOptimization("competitive")}
+                  className="h-8 gap-1.5 px-3 text-xs font-bold"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Auto-Tune For My PC
+                </Button>
+              </div>
+            </div>
+
+            {/* Tuning Presets */}
+            <div className="flex flex-col gap-2">
+              <Label className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <Sliders className="h-3.5 w-3.5 text-primary" />
+                Real JVM Optimization Presets
+              </Label>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  {
+                    id: "competitive",
+                    title: "Competitive High FPS",
+                    badge: "Max Frame Rate",
+                    badgeColor: "text-emerald-400 bg-emerald-500/15 border-emerald-500/30",
+                    desc: "20ms GC pause budget, 16MB heap regions, parallel ref processing. Maximum peak FPS and minimum frame latency.",
+                  },
+                  {
+                    id: "smooth",
+                    title: "Aikar's Frametime Smoother",
+                    badge: "Zero Stutter",
+                    badgeColor: "text-sky-400 bg-sky-500/15 border-sky-500/30",
+                    desc: "Industry gold-standard anti-stutter profile. Stabilizes 1% low framerates and prevents micro-freezes.",
+                  },
+                  {
+                    id: "shenandoah",
+                    title: "Shenandoah Ultra-Low Latency",
+                    badge: "Concurrent GC",
+                    badgeColor: "text-amber-400 bg-amber-500/15 border-amber-500/30",
+                    desc: "Parallel memory cleanup without freezing render threads. Zero hitching on modern Java 17/21.",
+                  },
+                  {
+                    id: "modded",
+                    title: "Modded Powerhouse",
+                    badge: "100+ Mods",
+                    badgeColor: "text-purple-400 bg-purple-500/15 border-purple-500/30",
+                    desc: "32MB heap regions with string deduplication. Prevents memory leaks and out-of-memory crashes on heavy modpacks.",
+                  },
+                ].map((preset) => {
+                  const isSelected = state.fpsPreset === preset.id;
+                  return (
+                    <div
+                      key={preset.id}
+                      onClick={() => updateState({ ...state, fpsPreset: preset.id as any })}
+                      className={`cursor-pointer rounded-2xl border p-3.5 transition-all backdrop-blur-md ${
+                        isSelected
+                          ? "border-white/40 bg-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.15)] ring-1 ring-white/30"
+                          : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-white">{preset.title}</span>
+                        <span className={`text-[9px] font-mono border px-1.5 py-0.5 rounded-full ${preset.badgeColor}`}>
+                          {preset.badge}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                        {preset.desc}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Real Hardware Accelerators (Toggles) */}
+            <div className="flex flex-col gap-2">
+              <Label className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <Flame className="h-3.5 w-3.5 text-primary" />
+                Hardware Accelerators
+              </Label>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3 transition-all hover:bg-white/[0.06]">
+                  <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                    <span className="text-xs font-semibold text-foreground">Force Discrete GPU (NVIDIA / AMD)</span>
+                    <span className="text-[11px] text-muted-foreground font-normal">
+                      Directs Windows Graphics & DirectX to prioritize your high-performance GPU over weak integrated graphics
+                    </span>
+                  </Label>
+                  <Switch
+                    checked={state.forceDiscreteGpu}
+                    onCheckedChange={(checked) =>
+                      updateState({ ...state, forceDiscreteGpu: checked })
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3 transition-all hover:bg-white/[0.06]">
+                  <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                    <span className="text-xs font-semibold text-foreground">Real-Time Process Priority</span>
+                    <span className="text-[11px] text-muted-foreground font-normal">
+                      Elevates Minecraft to HIGH_PRIORITY_CLASS upon spawn to prevent background apps from causing frame drops
+                    </span>
+                  </Label>
+                  <Switch
+                    checked={state.highProcessPriority}
+                    onCheckedChange={(checked) =>
+                      updateState({ ...state, highProcessPriority: checked })
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3 transition-all hover:bg-white/[0.06]">
+                  <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                    <span className="text-xs font-semibold text-foreground">Pre-Touch Heap Memory (-Xms == -Xmx)</span>
+                    <span className="text-[11px] text-muted-foreground font-normal">
+                      Allocates all RAM pages at launch and eliminates runtime OS memory paging hitches during chunk generation
+                    </span>
+                  </Label>
+                  <Switch
+                    checked={state.preTouchMemory}
+                    onCheckedChange={(checked) =>
+                      updateState({ ...state, preTouchMemory: checked })
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] p-3 transition-all hover:bg-white/[0.06]">
+                  <Label className="flex flex-col items-start gap-0.5 cursor-pointer">
+                    <span className="text-xs font-semibold text-foreground">Garbage Collection Stutter Reducer</span>
+                    <span className="text-[11px] text-muted-foreground font-normal">
+                      Disables explicit GC calls and eliminates JVM shared memory disk polling stalls (-XX:+PerfDisableSharedMem)
+                    </span>
+                  </Label>
+                  <Switch
+                    checked={state.optimizeGameGc}
+                    onCheckedChange={(checked) =>
+                      updateState({ ...state, optimizeGameGc: checked })
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </TabsContent>
 

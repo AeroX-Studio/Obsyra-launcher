@@ -37,6 +37,14 @@ impl Default for Theme {
     }
 }
 
+fn default_true() -> bool {
+    true
+}
+
+fn default_fps_preset() -> String {
+    "competitive".to_string()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LauncherState {
@@ -61,6 +69,19 @@ pub struct LauncherState {
 
     pub selected_profile_id: Option<String>,
     pub selected_version_id: Option<String>,
+
+    #[serde(default = "default_true")]
+    pub fps_booster_enabled: bool,
+    #[serde(default = "default_fps_preset")]
+    pub fps_preset: String,
+    #[serde(default = "default_true")]
+    pub force_discrete_gpu: bool,
+    #[serde(default = "default_true")]
+    pub high_process_priority: bool,
+    #[serde(default = "default_true")]
+    pub pre_touch_memory: bool,
+    #[serde(default = "default_true")]
+    pub optimize_game_gc: bool,
 }
 
 impl Default for LauncherState {
@@ -83,6 +104,12 @@ impl Default for LauncherState {
             legacy_filter: false,
             selected_profile_id: None,
             selected_version_id: None,
+            fps_booster_enabled: true,
+            fps_preset: "competitive".to_string(),
+            force_discrete_gpu: true,
+            high_process_priority: true,
+            pre_touch_memory: true,
+            optimize_game_gc: true,
         }
     }
 }
@@ -97,8 +124,16 @@ impl LauncherState {
                     .with_memory(sysinfo::MemoryRefreshKind::everything()),
             );
             let total_mb = sys.total_memory() / 1024 / 1024;
-            let half_ram = (total_mb / 2) as i32;
-            self.memory_amount = half_ram.clamp(2048, 8192);
+            let optimal_ram = if total_mb <= 4096 {
+                2048
+            } else if total_mb <= 8192 {
+                3584
+            } else if total_mb <= 16384 {
+                6144
+            } else {
+                8192
+            };
+            self.memory_amount = optimal_ram.clamp(1024, 12288);
         }
         if self.screen_width < 1 {
             self.screen_width = 854;

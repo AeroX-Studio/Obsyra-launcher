@@ -268,6 +268,124 @@ fn select_version(id: String, state: State<'_, AppState>, app: AppHandle) -> Res
     Ok(())
 }
 
+
+#[cfg(target_os = "windows")]
+fn boost_process_priority(pid: u32) {
+    unsafe {
+        extern "system" {
+            fn OpenProcess(dwDesiredAccess: u32, bInheritHandle: i32, dwProcessId: u32) -> *mut std::ffi::c_void;
+            fn SetPriorityClass(hProcess: *mut std::ffi::c_void, dwPriorityClass: u32) -> i32;
+            fn CloseHandle(hObject: *mut std::ffi::c_void) -> i32;
+        }
+        const PROCESS_SET_INFORMATION: u32 = 0x0200;
+        const HIGH_PRIORITY_CLASS: u32 = 0x00000080;
+        let handle = OpenProcess(PROCESS_SET_INFORMATION, 0, pid);
+        if !handle.is_null() {
+            let res = SetPriorityClass(handle, HIGH_PRIORITY_CLASS);
+            let _ = CloseHandle(handle);
+            if res != 0 {
+                println!("[FPS BOOSTER] Successfully elevated game process (PID {}) to HIGH_PRIORITY_CLASS", pid);
+            }
+        }
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn boost_process_priority(pid: u32) {
+    unsafe {
+        let _ = libc::setpriority(libc::PRIO_PROCESS, pid as _, -10);
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn register_high_performance_gpu(java_path: &str) {
+    let _ = std::process::Command::new("reg")
+        .args([
+            "add",
+            r"HKCU\Software\Microsoft\DirectX\UserGpuPreferences",
+            "/v",
+            java_path,
+            "/t",
+            "REG_SZ",
+            "/d",
+            "GpuPreference=2;",
+            "/f",
+        ])
+        .output();
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SystemSpecs {
+    pub cpu_name: String,
+    pub cpu_cores: usize,
+    pub total_memory_mb: u64,
+    pub available_memory_mb: u64,
+    pub recommended_memory_mb: u64,
+    pub os_name: String,
+    pub gpu_name: String,
+}
+
+#[tauri::command]
+fn get_system_specs() -> Result<SystemSpecs, String> {
+    let mut sys = sysinfo::System::new_with_specifics(
+        sysinfo::RefreshKind::nothing()
+            .with_memory(sysinfo::MemoryRefreshKind::everything())
+            .with_cpu(sysinfo::CpuRefreshKind::everything()),
+    );
+    sys.refresh_cpu_all();
+    let cpu_name = sys
+        .cpus()
+        .first()
+        .map(|c| c.brand().trim().to_string())
+        .unwrap_or_else(|| "Multi-Core Processor".to_string());
+    let cpu_cores = sys.cpus().len().max(1);
+    let total_memory_mb = sys.total_memory() / 1024 / 1024;
+    let available_memory_mb = sys.available_memory() / 1024 / 1024;
+
+    let recommended_memory_mb = if total_memory_mb <= 4096 {
+        2048
+    } else if total_memory_mb <= 8192 {
+        3584
+    } else if total_memory_mb <= 16384 {
+        6144
+    } else {
+        8192
+    };
+
+    #[cfg(target_os = "windows")]
+    let gpu_name = {
+        let mut name = "Standard Display Adapter".to_string();
+        if let Ok(output) = std::process::Command::new("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-Command", "(Get-CimInstance Win32_VideoController).Name -join ', '"])
+            .output()
+        {
+            if output.status.success() {
+                let s = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if !s.is_empty() {
+                    name = s;
+                }
+            }
+        }
+        name
+    };
+
+    #[cfg(not(target_os = "windows"))]
+    let gpu_name = "Hardware Accelerated GPU".to_string();
+
+    let os_name = format!("{} {}", std::env::consts::OS, std::env::consts::ARCH);
+
+    Ok(SystemSpecs {
+        cpu_name,
+        cpu_cores,
+        total_memory_mb,
+        available_memory_mb,
+        recommended_memory_mb,
+        os_name,
+        gpu_name,
+    })
+}
+
 #[derive(Clone, serde::Serialize)]
 struct LaunchProgressPayload {
     status: String,
@@ -456,19 +574,81 @@ async fn launch_game_inner(
         launcher.jvm_arg("-Dapple.awt.UIElement=false");
     }
 
-    launcher.jvm_arg(&format!("-Xmx{}M", launcher_state.memory_amount));
+    if launcher_state.fps_booster_enabled {
+        // Equal heap allocation (-Xms == -Xmx) eliminates dynamic heap resizing latency
+        launcher.jvm_arg(&format!("-Xms{}M", launcher_state.memory_amount));
+        launcher.jvm_arg(&format!("-Xmx{}M", launcher_state.memory_amount));
 
-    // Modern Aikar's G1GC flags to eliminate lag spikes and optimize chunk generation
-    launcher.jvm_arg("-XX:+UseG1GC");
-    launcher.jvm_arg("-XX:+ParallelRefProcEnabled");
-    launcher.jvm_arg("-XX:MaxGCPauseMillis=200");
-    launcher.jvm_arg("-XX:+UnlockExperimentalVMOptions");
-    launcher.jvm_arg("-XX:+DisableExplicitGC");
-    launcher.jvm_arg("-XX:+AlwaysPreTouch");
-    launcher.jvm_arg("-XX:G1NewSizePercent=30");
-    launcher.jvm_arg("-XX:G1MaxNewSizePercent=40");
-    launcher.jvm_arg("-XX:G1ReservePercent=20");
-    launcher.jvm_arg("-XX:G1HeapRegionSize=8M");
+        if launcher_state.pre_touch_memory {
+            launcher.jvm_arg("-XX:+AlwaysPreTouch");
+        }
+
+        if launcher_state.optimize_game_gc {
+            match launcher_state.fps_preset.as_str() {
+                "competitive" => {
+                    // Maximum raw FPS, 20ms pause budget, parallel ref processing
+                    launcher.jvm_arg("-XX:+UseG1GC");
+                    launcher.jvm_arg("-XX:+ParallelRefProcEnabled");
+                    launcher.jvm_arg("-XX:MaxGCPauseMillis=20");
+                    launcher.jvm_arg("-XX:+UnlockExperimentalVMOptions");
+                    launcher.jvm_arg("-XX:+DisableExplicitGC");
+                    launcher.jvm_arg("-XX:G1NewSizePercent=25");
+                    launcher.jvm_arg("-XX:G1MaxNewSizePercent=40");
+                    launcher.jvm_arg("-XX:G1ReservePercent=15");
+                    launcher.jvm_arg("-XX:G1HeapRegionSize=16M");
+                    launcher.jvm_arg("-XX:G1MixedGCCountTarget=4");
+                    launcher.jvm_arg("-XX:InitiatingHeapOccupancyPercent=45");
+                    launcher.jvm_arg("-XX:+PerfDisableSharedMem");
+                    launcher.jvm_arg("-XX:-UsePerfData");
+                    launcher.jvm_arg("-XX:+UseStringDeduplication");
+                }
+                "shenandoah" => {
+                    // Ultra-low latency concurrent garbage collector
+                    launcher.jvm_arg("-XX:+UnlockExperimentalVMOptions");
+                    launcher.jvm_arg("-XX:+UseShenandoahGC");
+                    launcher.jvm_arg("-XX:ShenandoahGCMode=iu");
+                    launcher.jvm_arg("-XX:ShenandoahPacing=true");
+                    launcher.jvm_arg("-XX:+DisableExplicitGC");
+                    launcher.jvm_arg("-XX:+PerfDisableSharedMem");
+                    launcher.jvm_arg("-XX:-UsePerfData");
+                }
+                "modded" => {
+                    // Optimized for large heaps (6GB-12GB) and hundreds of models
+                    launcher.jvm_arg("-XX:+UseG1GC");
+                    launcher.jvm_arg("-XX:+ParallelRefProcEnabled");
+                    launcher.jvm_arg("-XX:MaxGCPauseMillis=100");
+                    launcher.jvm_arg("-XX:+UnlockExperimentalVMOptions");
+                    launcher.jvm_arg("-XX:+DisableExplicitGC");
+                    launcher.jvm_arg("-XX:G1NewSizePercent=30");
+                    launcher.jvm_arg("-XX:G1MaxNewSizePercent=45");
+                    launcher.jvm_arg("-XX:G1ReservePercent=20");
+                    launcher.jvm_arg("-XX:G1HeapRegionSize=32M");
+                    launcher.jvm_arg("-XX:+UseStringDeduplication");
+                    launcher.jvm_arg("-XX:+PerfDisableSharedMem");
+                }
+                _ => {
+                    // "smooth" - Aikar's Frametime Smoother (zero 1% low frame drops)
+                    launcher.jvm_arg("-XX:+UseG1GC");
+                    launcher.jvm_arg("-XX:+ParallelRefProcEnabled");
+                    launcher.jvm_arg("-XX:MaxGCPauseMillis=50");
+                    launcher.jvm_arg("-XX:+UnlockExperimentalVMOptions");
+                    launcher.jvm_arg("-XX:+DisableExplicitGC");
+                    launcher.jvm_arg("-XX:G1NewSizePercent=30");
+                    launcher.jvm_arg("-XX:G1MaxNewSizePercent=40");
+                    launcher.jvm_arg("-XX:G1ReservePercent=20");
+                    launcher.jvm_arg("-XX:G1HeapRegionSize=8M");
+                    launcher.jvm_arg("-XX:G1MixedGCCountTarget=4");
+                    launcher.jvm_arg("-XX:InitiatingHeapOccupancyPercent=15");
+                    launcher.jvm_arg("-XX:SurvivorRatio=32");
+                    launcher.jvm_arg("-XX:+PerfDisableSharedMem");
+                }
+            }
+        }
+    } else {
+        launcher.jvm_arg(&format!("-Xmx{}M", launcher_state.memory_amount));
+        launcher.jvm_arg("-XX:+UseG1GC");
+        launcher.jvm_arg("-XX:MaxGCPauseMillis=200");
+    }
 
     if !launcher_state.jvm_arguments.is_empty() {
         for arg in launcher_state.jvm_arguments.split_whitespace() {
@@ -591,12 +771,26 @@ async fn launch_game_inner(
 
     let mut command = launcher.command().map_err(|e| e.to_string())?;
 
+    if launcher_state.fps_booster_enabled && launcher_state.force_discrete_gpu {
+        command.env("__NV_PRIME_RENDER_OFFLOAD", "1");
+        command.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia");
+        command.env("__VK_LAYER_NV_optimus", "NVIDIA_ONLY");
+        command.env("DRI_PRIME", "1");
+        command.env("SHIM_MCCOMPAT", "0xD0000000");
+        #[cfg(target_os = "windows")]
+        register_high_performance_gpu(&java_path);
+    }
+
     println!("[LAUNCH] {:?}", command);
 
     command.stdout(std::process::Stdio::piped());
     command.stderr(std::process::Stdio::piped());
 
     let mut child = command.spawn().map_err(|e| e.to_string())?;
+
+    if launcher_state.fps_booster_enabled && launcher_state.high_process_priority {
+        boost_process_priority(child.id());
+    }
 
     let session_logs = Arc::new(Mutex::new(Vec::<String>::new()));
     let start_time = std::time::Instant::now();
@@ -1393,6 +1587,7 @@ pub fn run() {
             extract_instance_zip_folder,
             delete_instance_file,
             get_startup_time,
+            get_system_specs,
             get_app_memory_usage,
             get_playtime_summary,
             get_last_crash_diagnostics,

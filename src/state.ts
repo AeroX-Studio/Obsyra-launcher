@@ -13,6 +13,18 @@ export type Language =
   | "JAPANESE";
 export type Theme = "LIGHT" | "DARK";
 
+export type FpsPreset = "competitive" | "smooth" | "shenandoah" | "modded" | "custom";
+
+export interface SystemSpecs {
+  cpuName: string;
+  cpuCores: number;
+  totalMemoryMb: number;
+  availableMemoryMb: number;
+  recommendedMemoryMb: number;
+  osName: string;
+  gpuName: string;
+}
+
 export interface LauncherState {
   scale: number;
   language: Language;
@@ -31,6 +43,12 @@ export interface LauncherState {
   legacyFilter: boolean;
   selectedProfileId: string | null;
   selectedVersionId: string | null;
+  fpsBoosterEnabled: boolean;
+  fpsPreset: FpsPreset;
+  forceDiscreteGpu: boolean;
+  highProcessPriority: boolean;
+  preTouchMemory: boolean;
+  optimizeGameGc: boolean;
 }
 
 export interface MinecraftVersion {
@@ -95,6 +113,9 @@ interface LauncherStore {
   removeSkinFromWardrobe: (id: string) => Promise<void>;
   applySkin: (profileId: string, skinId: string) => Promise<void>;
   getAccountCapes: (profileId: string) => Promise<MinecraftCape[]>;
+    systemSpecs: SystemSpecs | null;
+  fetchSystemSpecs: () => Promise<void>;
+  applyFpsOptimization: (preset: FpsPreset) => Promise<void>;
   setActiveCape: (profileId: string, capeId: string | null) => Promise<void>;
 }
 
@@ -116,6 +137,12 @@ export const DEFAULT_LAUNCHER_STATE: LauncherState = {
   legacyFilter: false,
   selectedProfileId: "demo-player-1",
   selectedVersionId: "1.21.4",
+  fpsBoosterEnabled: true,
+  fpsPreset: "competitive",
+  forceDiscreteGpu: true,
+  highProcessPriority: true,
+  preTouchMemory: true,
+  optimizeGameGc: true,
 };
 
 export const DEFAULT_PROFILES: Profile[] = [
