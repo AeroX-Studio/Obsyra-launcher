@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { invoke, isTauri } from "@tauri-apps/api/core";
-import { Loader2, Plus, Zap, Sparkles } from "lucide-react";
+import { Loader2, Plus, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";

@@ -34,12 +34,8 @@ import {
   Plus,
   Trash2,
   X,
-  Layers,
-  FolderSync,
   Radio,
   CheckCircle2,
-  Swords,
-  Compass,
 } from "lucide-react";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { useTranslation } from "react-i18next";
@@ -545,7 +541,7 @@ export const SettingsDialog = () => {
                         max={16384}
                         step={512}
                         value={[state.memoryAmount]}
-                        onValueChange={(val) => updateState({ ...state, memoryAmount: val[0] ?? 4096 })}
+                        onValueChange={(val) => updateState({ ...state, memoryAmount: (Array.isArray(val) ? val[0] : val) ?? 4096 })}
                         className="w-full py-1"
                       />
                       <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
@@ -771,7 +767,7 @@ export const SettingsDialog = () => {
                           max={2.0}
                           step={0.05}
                           value={[state.mouseSensitivity]}
-                          onValueChange={(vals) => updateState({ ...state, mouseSensitivity: vals[0] ?? 1.0 })}
+                          onValueChange={(vals) => updateState({ ...state, mouseSensitivity: (Array.isArray(vals) ? vals[0] : vals) ?? 1.0 })}
                           className="w-full py-1"
                         />
                         <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
@@ -797,7 +793,7 @@ export const SettingsDialog = () => {
                           max={110}
                           step={1}
                           value={[state.fov]}
-                          onValueChange={(vals) => updateState({ ...state, fov: vals[0] ?? 70 })}
+                          onValueChange={(vals) => updateState({ ...state, fov: (Array.isArray(vals) ? vals[0] : vals) ?? 70 })}
                           className="w-full py-1"
                         />
                         <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
@@ -1105,7 +1101,7 @@ export const SettingsDialog = () => {
                         <div className="relative">
                           <div className="h-14 w-14 rounded-full border-2 border-white/10 bg-[#232428] overflow-hidden flex items-center justify-center shadow-lg">
                             {activeProfile?.skinPng ? (
-                              <ProfileAvatar skinPng={activeProfile.skinPng} size={56} className="h-full w-full object-cover" />
+                              <ProfileAvatar username={selectedProfile} size={56} className="h-full w-full object-cover" />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-white font-bold text-lg">
                                 {selectedProfile.charAt(0).toUpperCase()}
