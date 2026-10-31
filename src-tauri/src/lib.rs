@@ -36,6 +36,7 @@ fn get_startup_time() -> u64 {
 
 #[repr(C)]
 #[derive(Default)]
+#[allow(dead_code)]
 struct TaskVmInfo {
     virtual_size: u64,
     region_count: u32,
